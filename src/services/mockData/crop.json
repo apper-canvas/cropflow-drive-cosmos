@@ -1,0 +1,92 @@
+[
+  {
+    "id": "1",
+    "type": "Corn",
+    "variety": "Pioneer P1197AM",
+    "fieldId": "1",
+    "plantingDate": "2024-04-15",
+    "growthStage": "vegetative",
+    "yieldEstimate": 180.5
+  },
+  {
+    "id": "2",
+    "type": "Wheat",
+    "variety": "Hard Red Spring",
+    "fieldId": "2",
+    "plantingDate": "2024-03-22",
+    "growthStage": "flowering",
+    "yieldEstimate": 65.2
+  },
+  {
+    "id": "3",
+    "type": "Soybeans",
+    "variety": "Roundup Ready 2 Yield",
+    "fieldId": "3",
+    "plantingDate": "2024-05-01",
+    "growthStage": "seedling",
+    "yieldEstimate": 58.7
+  },
+  {
+    "id": "4",
+    "type": "Barley",
+    "variety": "Hulless",
+    "fieldId": "4",
+    "plantingDate": "2024-04-08",
+    "growthStage": "fruiting",
+    "yieldEstimate": 42.3
+  },
+  {
+    "id": "5",
+    "type": "Canola",
+    "variety": "InVigor L140P",
+    "fieldId": "5",
+    "plantingDate": "2024-04-20",
+    "growthStage": "vegetative",
+    "yieldEstimate": 35.8
+  },
+  {
+    "id": "6",
+    "type": "Sunflowers",
+    "variety": "High Oleic",
+    "fieldId": "6",
+    "plantingDate": "2024-05-15",
+    "growthStage": "seedling",
+    "yieldEstimate": 28.9
+  },
+  {
+    "id": "7",
+    "type": "Oats",
+    "variety": "White Hulless",
+    "fieldId": "7",
+    "plantingDate": "2024-03-30",
+    "growthStage": "harvest-ready",
+    "yieldEstimate": 89.4
+  },
+  {
+    "id": "8",
+    "type": "Rice",
+    "variety": "Long Grain",
+    "fieldId": "8",
+    "plantingDate": "2024-05-08",
+    "growthStage": "vegetative",
+    "yieldEstimate": 95.2
+  },
+  {
+    "id": "9",
+    "type": "Alfalfa",
+    "variety": "Dormant",
+    "fieldId": "9",
+    "plantingDate": "2024-04-25",
+    "growthStage": "flowering",
+    "yieldEstimate": 12.6
+  },
+  {
+    "id": "10",
+    "type": "Cotton",
+    "variety": "Upland",
+    "fieldId": "10",
+    "plantingDate": "2024-05-10",
+    "growthStage": "seedling",
+    "yieldEstimate": 850.0
+  }
+]

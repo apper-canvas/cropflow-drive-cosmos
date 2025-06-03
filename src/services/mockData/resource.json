@@ -1,0 +1,137 @@
+[
+  {
+    "id": "1",
+    "type": "seed",
+    "name": "Corn Seed - Pioneer P1197AM",
+    "quantity": 250,
+    "unit": "kg",
+    "minimumStock": 100,
+    "supplier": "Pioneer Hi-Bred"
+  },
+  {
+    "id": "2",
+    "type": "fertilizer",
+    "name": "Nitrogen Fertilizer (46-0-0)",
+    "quantity": 500,
+    "unit": "kg",
+    "minimumStock": 200,
+    "supplier": "Koch Fertilizer"
+  },
+  {
+    "id": "3",
+    "type": "pesticide",
+    "name": "Roundup PowerMAX",
+    "quantity": 25,
+    "unit": "L",
+    "minimumStock": 50,
+    "supplier": "Bayer CropScience"
+  },
+  {
+    "id": "4",
+    "type": "seed",
+    "name": "Wheat Seed - Hard Red Spring",
+    "quantity": 180,
+    "unit": "kg",
+    "minimumStock": 150,
+    "supplier": "Limagrain Cereal Seeds"
+  },
+  {
+    "id": "5",
+    "type": "fertilizer",
+    "name": "Phosphorus Fertilizer (0-46-0)",
+    "quantity": 300,
+    "unit": "kg",
+    "minimumStock": 250,
+    "supplier": "Mosaic Company"
+  },
+  {
+    "id": "6",
+    "type": "equipment",
+    "name": "John Deere 8370R Tractor",
+    "quantity": 1,
+    "unit": "unit",
+    "minimumStock": 1,
+    "supplier": "John Deere"
+  },
+  {
+    "id": "7",
+    "type": "seed",
+    "name": "Soybean Seed - Roundup Ready",
+    "quantity": 120,
+    "unit": "kg",
+    "minimumStock": 100,
+    "supplier": "Monsanto"
+  },
+  {
+    "id": "8",
+    "type": "fertilizer",
+    "name": "Potassium Fertilizer (0-0-60)",
+    "quantity": 400,
+    "unit": "kg",
+    "minimumStock": 300,
+    "supplier": "Compass Minerals"
+  },
+  {
+    "id": "9",
+    "type": "pesticide",
+    "name": "Liberty 280 SL",
+    "quantity": 15,
+    "unit": "L",
+    "minimumStock": 30,
+    "supplier": "BASF"
+  },
+  {
+    "id": "10",
+    "type": "equipment",
+    "name": "Case IH Combine Harvester",
+    "quantity": 1,
+    "unit": "unit",
+    "minimumStock": 1,
+    "supplier": "Case IH"
+  },
+  {
+    "id": "11",
+    "type": "seed",
+    "name": "Barley Seed - Hulless",
+    "quantity": 80,
+    "unit": "kg",
+    "minimumStock": 75,
+    "supplier": "Alberta Barley"
+  },
+  {
+    "id": "12",
+    "type": "fertilizer",
+    "name": "Liquid Starter Fertilizer",
+    "quantity": 2000,
+    "unit": "L",
+    "minimumStock": 1500,
+    "supplier": "Yara International"
+  },
+  {
+    "id": "13",
+    "type": "pesticide",
+    "name": "Fungicide - Prosaro",
+    "quantity": 40,
+    "unit": "L",
+    "minimumStock": 60,
+    "supplier": "Syngenta"
+  },
+  {
+    "id": "14",
+    "type": "equipment",
+    "name": "Irrigation System - Center Pivot",
+    "quantity": 3,
+    "unit": "unit",
+    "minimumStock": 2,
+    "supplier": "Valley Irrigation"
+  },
+  {
+    "id": "15",
+    "type": "seed",
+    "name": "Canola Seed - InVigor",
+    "quantity": 45,
+    "unit": "kg",
+    "minimumStock": 50,
+    "supplier": "BASF"
+  }
+]

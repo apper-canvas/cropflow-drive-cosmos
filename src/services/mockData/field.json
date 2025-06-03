@@ -1,0 +1,102 @@
+[
+  {
+    "id": "1",
+    "name": "North Field Alpha",
+    "size": 25.5,
+    "coordinates": [40.7128, -74.0060],
+    "currentCrop": "Corn",
+    "plantingDate": "2024-04-15",
+    "expectedHarvest": "2024-09-20",
+    "soilType": "Clay loam"
+  },
+  {
+    "id": "2",
+    "name": "South Field Beta",
+    "size": 18.2,
+    "coordinates": [40.7580, -73.9855],
+    "currentCrop": "Wheat",
+    "plantingDate": "2024-03-22",
+    "expectedHarvest": "2024-08-15",
+    "soilType": "Sandy loam"
+  },
+  {
+    "id": "3",
+    "name": "East Field Gamma",
+    "size": 32.1,
+    "coordinates": [40.7505, -73.9934],
+    "currentCrop": "Soybeans",
+    "plantingDate": "2024-05-01",
+    "expectedHarvest": "2024-10-10",
+    "soilType": "Silt loam"
+  },
+  {
+    "id": "4",
+    "name": "West Field Delta",
+    "size": 15.8,
+    "coordinates": [40.7282, -74.0776],
+    "currentCrop": "Barley",
+    "plantingDate": "2024-04-08",
+    "expectedHarvest": "2024-08-30",
+    "soilType": "Clay"
+  },
+  {
+    "id": "5",
+    "name": "Central Field Epsilon",
+    "size": 42.7,
+    "coordinates": [40.7831, -73.9712],
+    "currentCrop": "Canola",
+    "plantingDate": "2024-04-20",
+    "expectedHarvest": "2024-09-05",
+    "soilType": "Loam"
+  },
+  {
+    "id": "6",
+    "name": "Lower Field Zeta",
+    "size": 28.3,
+    "coordinates": [40.7356, -74.1723],
+    "currentCrop": "Sunflowers",
+    "plantingDate": "2024-05-15",
+    "expectedHarvest": "2024-10-20",
+    "soilType": "Sandy clay loam"
+  },
+  {
+    "id": "7",
+    "name": "Upper Field Eta",
+    "size": 21.9,
+    "coordinates": [40.7489, -73.9857],
+    "currentCrop": "Oats",
+    "plantingDate": "2024-03-30",
+    "expectedHarvest": "2024-08-25",
+    "soilType": "Silty clay"
+  },
+  {
+    "id": "8",
+    "name": "River Field Theta",
+    "size": 35.6,
+    "coordinates": [40.7614, -73.9776],
+    "currentCrop": "Rice",
+    "plantingDate": "2024-05-08",
+    "expectedHarvest": "2024-10-15",
+    "soilType": "Clay"
+  },
+  {
+    "id": "9",
+    "name": "Hill Field Iota",
+    "size": 19.4,
+    "coordinates": [40.7903, -73.9441],
+    "currentCrop": "Alfalfa",
+    "plantingDate": "2024-04-25",
+    "expectedHarvest": "2024-07-30",
+    "soilType": "Sandy loam"
+  },
+  {
+    "id": "10",
+    "name": "Valley Field Kappa",
+    "size": 26.8,
+    "coordinates": [40.7178, -74.0431],
+    "currentCrop": "Cotton",
+    "plantingDate": "2024-05-10",
+    "expectedHarvest": "2024-11-05",
+    "soilType": "Silt loam"
+  }
+]
