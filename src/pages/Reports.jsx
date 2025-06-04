@@ -678,10 +678,17 @@ const handleExport = async (format) => {
           {/* Resource Chart */}
           <motion.div variants={itemVariants}>
             <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth report-chart-container">
-              <div className="chart-container">
+<div className="chart-container">
                 <div className="chart-wrapper">
                   <ReactApexCharts 
-                    options={resourceChart.options} 
+                    options={{
+                      ...resourceChart.options,
+                      chart: {
+                        ...resourceChart.options.chart,
+                        height: 300,
+                        width: '100%'
+                      }
+                    }}
                     series={resourceChart.series} 
                     type="pie" 
                     height={300}

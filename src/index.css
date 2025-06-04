@@ -298,7 +298,165 @@
 /* Chart animation improvements */
 .apexcharts-series {
   animation-duration: 0.8s !important;
-animation-timing-function: ease-out !important;
+  animation-timing-function: ease-out !important;
+}
+
+/* Enhanced Chart Visibility Fixes */
+.apexcharts-canvas {
+  background: transparent !important;
+  min-height: 300px !important;
+}
+
+.apexcharts-svg {
+  background: transparent !important;
+  min-height: 300px !important;
+  width: 100% !important;
+}
+
+.apexcharts-graphical {
+  fill: transparent !important;
+}
+
+.apexcharts-grid {
+  stroke: rgba(139, 69, 19, 0.1) !important;
+}
+
+.dark .apexcharts-grid {
+  stroke: rgba(255, 255, 255, 0.1) !important;
+}
+
+.apexcharts-text {
+  fill: #1e293b !important;
+  font-family: 'IBM Plex Sans', sans-serif !important;
+}
+
+.dark .apexcharts-text {
+  fill: #f1f5f9 !important;
+}
+
+/* Enhanced Chart Container Styling */
+.chart-container {
+  min-height: 350px !important;
+  height: 350px !important;
+  width: 100% !important;
+  position: relative !important;
+  background: transparent !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: visible !important;
+}
+
+.chart-wrapper {
+  background: transparent !important;
+  border-radius: 12px !important;
+  padding: 16px !important;
+  min-height: 350px !important;
+  height: 350px !important;
+  width: 100% !important;
+  display: block !important;
+  overflow: visible !important;
+}
+
+/* Force proper chart dimensions */
+.chart-wrapper .apexcharts-canvas {
+  min-height: 300px !important;
+  height: 300px !important;
+  width: 100% !important;
+  background: transparent !important;
+}
+
+.chart-wrapper .apexcharts-inner {
+  min-height: 300px !important;
+  height: 300px !important;
+  width: 100% !important;
+  background: transparent !important;
+}
+
+.chart-wrapper > div {
+  height: 100% !important;
+  width: 100% !important;
+  min-height: 300px !important;
+}
+
+/* Chart animation and rendering improvements */
+.apexcharts-canvas svg {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 300px !important;
+}
+
+.apexcharts-title-text {
+  fill: #1e293b !important;
+  font-family: 'IBM Plex Sans', sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+}
+
+.dark .apexcharts-title-text {
+  fill: #f1f5f9 !important;
+}
+
+/* Enhanced responsive styling */
+@media (max-width: 768px) {
+  .chart-container {
+    min-height: 280px !important;
+    height: 280px !important;
+  }
+  
+  .chart-wrapper {
+    min-height: 280px !important;
+    height: 280px !important;
+    padding: 12px !important;
+  }
+  
+  .chart-wrapper .apexcharts-canvas {
+    min-height: 250px !important;
+    height: 250px !important;
+  }
+  
+  .chart-wrapper .apexcharts-inner {
+    min-height: 250px !important;
+    height: 250px !important;
+  }
+  
+  .chart-wrapper > div {
+    min-height: 250px !important;
+  }
+  
+  .apexcharts-canvas svg {
+    min-height: 250px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .chart-container {
+    min-height: 250px !important;
+    height: 250px !important;
+  }
+  
+  .chart-wrapper {
+    padding: 8px !important;
+    min-height: 250px !important;
+    height: 250px !important;
+  }
+  
+  .chart-wrapper .apexcharts-canvas {
+    min-height: 220px !important;
+    height: 220px !important;
+  }
+  
+  .chart-wrapper .apexcharts-inner {
+    min-height: 220px !important;
+    height: 220px !important;
+  }
+  
+  .chart-wrapper > div {
+    min-height: 220px !important;
+  }
+  
+  .apexcharts-canvas svg {
+    min-height: 220px !important;
+  }
 }
 
 /* Report Page Styling */
