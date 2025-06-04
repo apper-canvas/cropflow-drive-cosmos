@@ -83,8 +83,18 @@ function App() {
                       ? 'text-primary font-medium' 
                       : 'text-earth-700 dark:text-earth-300 hover:text-primary'
                   }`}
-                >
+>
                   Financials
+                </Link>
+                <Link 
+                  to="/reports" 
+                  className={`transition-colors ${
+                    location.pathname === '/reports' 
+                      ? 'text-primary font-medium' 
+                      : 'text-earth-700 dark:text-earth-300 hover:text-primary'
+                  }`}
+                >
+                  Reports
                 </Link>
               </div>
 
@@ -109,8 +119,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/fields" element={<Fields />} />
           <Route path="/resources" element={<Resources />} />
-          <Route path="/tasks" element={<Tasks />} />
+<Route path="/tasks" element={<Tasks />} />
           <Route path="/financials" element={<Financials />} />
+          <Route path="/reports" element={<Reports />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
 
