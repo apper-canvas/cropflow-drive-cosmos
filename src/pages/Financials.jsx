@@ -963,8 +963,8 @@ Profitability Analysis by Crop
 ]}
                       type="bar"
                       height={300}
-                    />
-</div>
+/>
+                  </div>
                 </motion.div>
               </div>
             </div>
