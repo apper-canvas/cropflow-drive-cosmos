@@ -6,6 +6,7 @@ export { default as expenseService } from './api/expenseService.js'
 export { default as incomeService } from './api/incomeService.js'
 export { default as cropService } from './api/cropService.js'
 export { default as equipmentService } from './api/equipmentService.js'
+export { default as weatherService } from './api/weatherService.js'
 
 // Service registry for dynamic imports
 export const services = {
