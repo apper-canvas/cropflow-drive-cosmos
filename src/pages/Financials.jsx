@@ -968,8 +968,8 @@ height={300}
                   />
 </div>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </>
         )}
 
         {/* Add Expense Modal */}
