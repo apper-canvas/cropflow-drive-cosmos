@@ -88,6 +88,16 @@ function App() {
                   Financials
                 </Link>
                 <Link 
+                  to="/equipment-maintenance" 
+                  className={`transition-colors ${
+                    location.pathname === '/equipment-maintenance' 
+                      ? 'text-primary font-medium' 
+                      : 'text-earth-700 dark:text-earth-300 hover:text-primary'
+                  }`}
+                >
+                  Equipment
+                </Link>
+                <Link 
                   to="/reports" 
                   className={`transition-colors ${
                     location.pathname === '/reports' 
@@ -121,7 +131,8 @@ function App() {
           <Route path="/fields" element={<Fields />} />
           <Route path="/resources" element={<Resources />} />
 <Route path="/tasks" element={<Tasks />} />
-          <Route path="/financials" element={<Financials />} />
+<Route path="/financials" element={<Financials />} />
+          <Route path="/equipment-maintenance" element={<EquipmentMaintenance />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
