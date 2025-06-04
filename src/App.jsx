@@ -7,9 +7,9 @@ import Fields from './pages/Fields'
 import Resources from './pages/Resources'
 import Tasks from './pages/Tasks'
 import Financials from './pages/Financials'
+import Reports from './pages/Reports'
 import NotFound from './pages/NotFound'
 import ApperIcon from './components/ApperIcon'
-
 function App() {
   const [darkMode, setDarkMode] = useState(false)
   const location = useLocation()

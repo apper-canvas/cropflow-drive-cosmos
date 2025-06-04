@@ -243,5 +243,111 @@
 /* Chart animation improvements */
 .apexcharts-series {
   animation-duration: 0.8s !important;
-  animation-timing-function: ease-out !important;
+animation-timing-function: ease-out !important;
+}
+
+/* Report Page Styling */
+.report-container {
+  background: transparent;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.report-export-btn {
+  background: linear-gradient(135deg, #228B22, #32CD32);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  padding: 12px 24px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.report-export-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(34, 139, 34, 0.3);
+}
+
+.report-export-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.report-chart-container {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 20px;
+  margin: 16px 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.dark .report-chart-container {
+  background: rgba(30, 41, 59, 0.95);
+}
+
+.report-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.report-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+/* Print styles for PDF export */
+@media print {
+  .report-container {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  
+  .report-chart-container {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  
+  .report-export-btn {
+    display: none;
+  }
+  
+  .apexcharts-toolbar {
+    display: none !important;
+  }
+}
+
+/* Responsive adjustments for report components */
+@media (max-width: 768px) {
+  .report-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
+  .report-filter-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .report-chart-container {
+    padding: 12px;
+    margin: 8px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .report-stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .report-export-btn {
+    width: 100%;
+    margin: 4px 0;
+  }
 }
