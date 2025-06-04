@@ -893,78 +893,84 @@ Profitability Analysis by Crop
                   <p className="text-sm text-earth-500 dark:text-earth-500 mt-2">
                     Add income and expense records to see profitability analysis
                   </p>
-                </div>
+</div>
               )}
             </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Profit by Crop Chart */}
-              <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
-                <h4 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">
-                  Profit by Crop
-                </h4>
-                <ReactApexCharts
-                  options={{
-                      chart: { type: 'bar', background: 'transparent' },
-                      xaxis: { categories: Object.keys(currentProfitabilityData) },
-                      colors: ['#22C55E', '#EF4444'],
-                      plotOptions: { bar: { columnWidth: '60%', borderRadius: 4 } },
-                      dataLabels: { enabled: false },
-                      yaxis: {
-                        labels: {
-                          formatter: function (val) {
-                            return '$' + val.toFixed(0)
-                          }
-                        }
-                      }
-                    }}
-                    series={[{
-                      name: 'Profit/Loss',
-                      data: Object.values(currentProfitabilityData).map(data => data.profit || 0)
-                    }]}
-                    type="bar"
-                    height={300}
-                  />
-                </div>
-
-                {/* Revenue vs Expenses Chart */}
+              <motion.div variants={itemVariants}>
                 <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
                   <h4 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">
-                    Revenue vs Expenses
+                    Profit by Crop
                   </h4>
                   <ReactApexCharts
                     options={{
-                      chart: { type: 'bar', background: 'transparent' },
-                      xaxis: { categories: Object.keys(currentProfitabilityData) },
-                      colors: ['#22C55E', '#EF4444'],
-                      legend: { position: 'top' },
-                      plotOptions: { bar: { columnWidth: '60%', borderRadius: 4 } },
-                      dataLabels: { enabled: false },
-                      yaxis: {
-                        labels: {
-                          formatter: function (val) {
-                            return '$' + val.toFixed(0)
+                        chart: { type: 'bar', background: 'transparent' },
+                        xaxis: { categories: Object.keys(currentProfitabilityData) },
+                        colors: ['#22C55E', '#EF4444'],
+                        plotOptions: { bar: { columnWidth: '60%', borderRadius: 4 } },
+                        dataLabels: { enabled: false },
+                        yaxis: {
+                          labels: {
+                            formatter: function (val) {
+                              return '$' + val.toFixed(0)
+                            }
                           }
                         }
-                      }
-                    }}
-                    series={[
-                      {
-                        name: 'Income',
-                        data: Object.values(currentProfitabilityData).map(data => data.income || 0)
-                      },
-                      {
-                        name: 'Expenses',
-                        data: Object.values(currentProfitabilityData).map(data => data.expenses || 0)
-                      }
-                    ]}
-                    type="bar"
-                    height={300}
-                  />
-                </div>
+                      }}
+                      series={[{
+                        name: 'Profit/Loss',
+                        data: Object.values(currentProfitabilityData).map(data => data.profit || 0)
+                      }]}
+                      type="bar"
+                      height={300}
+                    />
+                  </div>
+                </motion.div>
+
+                {/* Revenue vs Expenses Chart */}
+                <motion.div variants={itemVariants}>
+                  <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
+                    <h4 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">
+                      Revenue vs Expenses
+                    </h4>
+                    <ReactApexCharts
+                      options={{
+                        chart: { type: 'bar', background: 'transparent' },
+                        xaxis: { categories: Object.keys(currentProfitabilityData) },
+                        colors: ['#22C55E', '#EF4444'],
+                        legend: { position: 'top' },
+                        plotOptions: { bar: { columnWidth: '60%', borderRadius: 4 } },
+                        dataLabels: { enabled: false },
+                        yaxis: {
+                          labels: {
+                            formatter: function (val) {
+                              return '$' + val.toFixed(0)
+                            }
+                          }
+                        }
+                      }}
+                      series={[
+                        {
+                          name: 'Income',
+                          data: Object.values(currentProfitabilityData).map(data => data.income || 0)
+                        },
+                        {
+                          name: 'Expenses',
+                          data: Object.values(currentProfitabilityData).map(data => data.expenses || 0)
+                        }
+                      ]}
+                      type="bar"
+                      height={300}
+                    />
+</div>
+                </motion.div>
               </div>
             </div>
           </motion.div>
         )}
+
         {/* Add Expense Modal */}
         {showAddModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
