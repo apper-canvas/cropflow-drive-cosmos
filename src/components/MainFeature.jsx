@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'react-toastify'
+import ReactApexCharts from 'react-apexcharts'
 import ApperIcon from './ApperIcon'
 import { fieldService, taskService, resourceService } from '../services'
 
 const MainFeature = () => {
-const [activeTab, setActiveTab] = useState('fields')
+  const [activeTab, setActiveTab] = useState('fields')
   const [fields, setFields] = useState([])
   const [tasks, setTasks] = useState([])
   const [resources, setResources] = useState([])
@@ -51,11 +52,11 @@ const [activeTab, setActiveTab] = useState('fields')
 
   // Load data based on active tab
   useEffect(() => {
-    const loadData = async () => {
+const loadData = async () => {
       setLoading(true)
       setError(null)
       try {
-switch (activeTab) {
+        switch (activeTab) {
           case 'fields':
             const fieldsData = await fieldService.getAll()
             setFields(fieldsData || [])
@@ -121,14 +122,14 @@ switch (activeTab) {
     }
   }
 
-  const updateTaskStatus = async (taskId, newStatus) => {
+const updateTaskStatus = async (taskId, newStatus) => {
     try {
       const updatedTask = await taskService.update(taskId, { status: newStatus })
       setTasks(prev => prev.map(task => task.id === taskId ? updatedTask : task))
       toast.success(`Task ${newStatus}`)
     } catch (err) {
       toast.error('Failed to update task')
-}
+    }
   }
 
   // Financial management functions
@@ -776,12 +777,12 @@ const tabs = [
                         ))}
                       </div>
 
-                      {/* Expense Distribution Chart */}
+{/* Expense Distribution Chart */}
                       <div className="bg-white dark:bg-earth-700 rounded-xl p-6 border border-earth-200 dark:border-earth-700">
                         <h4 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">Expense Distribution</h4>
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                           <div className="flex flex-col items-center justify-center">
-                            <Chart
+                            <ReactApexCharts
                               options={{
                                 chart: { type: 'donut' },
                                 labels: getExpenseChartData().labels,
@@ -811,7 +812,7 @@ const tabs = [
                       {/* Budget vs Actual */}
                       <div className="bg-white dark:bg-earth-700 rounded-xl p-6 border border-earth-200 dark:border-earth-700">
                         <h4 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">Budget vs Actual</h4>
-                        <Chart
+                        <ReactApexCharts
                           options={{
                             chart: { type: 'bar' },
                             xaxis: { categories: getBudgetVsActual().categories },
@@ -1346,15 +1347,15 @@ const tabs = [
                               )
                             })}
                           </div>
-                        </div>
+</div>
                       </div>
-
+                    </div>
                       {/* Monthly Expense Trend */}
                       <div className="bg-white dark:bg-earth-700 rounded-xl p-6 border border-earth-200 dark:border-earth-700">
                         <h4 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">
                           Monthly Expense Trend
                         </h4>
-                        <Chart
+                        <ReactApexCharts
                           options={{
                             chart: { type: 'line' },
                             xaxis: {
