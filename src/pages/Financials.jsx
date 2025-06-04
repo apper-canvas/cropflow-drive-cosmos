@@ -421,9 +421,9 @@ toast.error('Failed to delete expense')
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-earth-800 dark:text-earth-100 mb-2">
                 Financial Tracking
               </h1>
-              <p className="text-earth-600 dark:text-earth-300 text-sm sm:text-base">
+<p className="text-earth-600 dark:text-earth-300 text-sm sm:text-base">
                 Analyze costs per field and crop to optimize your farm's profitability
-</p>
+              </p>
             </div>
             <div className="flex items-center gap-4">
               {activeTab === 'expenses' && (
@@ -442,9 +442,9 @@ toast.error('Failed to delete expense')
                   className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-earth hover:shadow-earth-hover"
                 >
                   <ApperIcon name="Plus" className="h-5 w-5 inline mr-2" />
-                  Add Income
+Add Income
                 </button>
-)}
+              )}
             </div>
           </div>
         </motion.div>
@@ -522,9 +522,9 @@ toast.error('Failed to delete expense')
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-earth-600 dark:text-earth-400 text-sm mb-1">Avg per Expense</p>
-                <p className="text-2xl font-bold text-earth-800 dark:text-earth-100">
+<p className="text-2xl font-bold text-earth-800 dark:text-earth-100">
                   ${expenses.length > 0 ? (totalExpenses / expenses.length).toFixed(2) : '0.00'}
-</p>
+                </p>
               </div>
               <ApperIcon name="TrendingUp" className="h-8 w-8 text-green-600" />
             </div>
@@ -644,9 +644,9 @@ toast.error('Failed to delete expense')
                   <option value="labor">Labor</option>
                   <option value="fuel">Fuel</option>
                   <option value="maintenance">Maintenance</option>
-                </select>
+</select>
               </div>
-</div>
+            </div>
           </div>
         </motion.div>
 
@@ -838,9 +838,9 @@ toast.error('Failed to delete expense')
           <motion.div variants={itemVariants} className="space-y-8">
             {/* Profitability by Crop Table */}
             <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
-              <h3 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-6">
+<h3 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-6">
                 Profitability Analysis by Crop
-</h3>
+              </h3>
               
               {Object.keys(currentProfitabilityData).length > 0 ? (
                 <div className="overflow-x-auto">
@@ -852,9 +852,9 @@ toast.error('Failed to delete expense')
                         <th className="text-right py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Expenses</th>
                         <th className="text-right py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Profit/Loss</th>
                         <th className="text-right py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Margin</th>
-                        <th className="text-center py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Status</th>
+<th className="text-center py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Status</th>
                       </tr>
-</thead>
+                    </thead>
                     <tbody>
                       {Object.entries(currentProfitabilityData).map(([crop, data]) => (
                         <tr key={crop} className="border-b border-earth-100 dark:border-earth-700 hover:bg-earth-50 dark:hover:bg-earth-700/50">
@@ -890,16 +890,16 @@ toast.error('Failed to delete expense')
                     </tbody>
                   </table>
                 </div>
-              ) : (
+) : (
                 <div className="text-center py-8">
-<ApperIcon name="BarChart3" className="h-12 w-12 text-earth-400 mx-auto mb-4" />
+                  <ApperIcon name="BarChart3" className="h-12 w-12 text-earth-400 mx-auto mb-4" />
                   <p className="text-earth-600 dark:text-earth-400">No profitability data available</p>
                   <p className="text-sm text-earth-500 dark:text-earth-500 mt-2">
                     Add income and expense records to see profitability analysis
                   </p>
                 </div>
               )}
-            </div>
+</div>
 
             {/* Profitability Charts */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -921,7 +921,7 @@ toast.error('Failed to delete expense')
                             return '$' + val.toFixed(0)
                           }
                         }
-}
+                      }
                     }}
                     series={[{
                       name: 'Profit/Loss',
@@ -936,7 +936,7 @@ toast.error('Failed to delete expense')
                 <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
                   <h4 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">
                     Revenue vs Expenses
-</h4>
+                  </h4>
                   <ReactApexCharts
                     options={{
                       chart: { type: 'bar', background: 'transparent' },
@@ -952,7 +952,7 @@ toast.error('Failed to delete expense')
                           }
                         }
                       }
-}}
+                    }}
                     series={[
                       {
                         name: 'Income',
@@ -964,14 +964,13 @@ toast.error('Failed to delete expense')
                       }
                     ]}
                     type="bar"
-height={300}
+                    height={300}
                   />
-</div>
+                </div>
               </div>
-            </motion.div>
-          </>
+            </div>
+          </motion.div>
         )}
-
         {/* Add Expense Modal */}
         {showAddModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -1031,9 +1030,9 @@ height={300}
                       required
                     >
                       <option value="">Select category</option>
-                      <option value="seeds">Seeds</option>
+<option value="seeds">Seeds</option>
                       <option value="fertilizer">Fertilizer</option>
-<option value="equipment">Equipment</option>
+                      <option value="equipment">Equipment</option>
                       <option value="labor">Labor</option>
                       <option value="fuel">Fuel</option>
                       <option value="maintenance">Maintenance</option>
@@ -1166,9 +1165,9 @@ height={300}
                       required
                     >
                       <option value="">Select category</option>
-                      <option value="seeds">Seeds</option>
+<option value="seeds">Seeds</option>
                       <option value="fertilizer">Fertilizer</option>
-<option value="equipment">Equipment</option>
+                      <option value="equipment">Equipment</option>
                       <option value="labor">Labor</option>
                       <option value="fuel">Fuel</option>
                       <option value="maintenance">Maintenance</option>
@@ -1230,9 +1229,9 @@ height={300}
                   >
                     Cancel
                   </button>
-                  <button
+<button
                     type="submit"
-className="flex-1 bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg transition-colors"
+                    className="flex-1 bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg transition-colors"
                   >
                     Update Expense
                   </button>
