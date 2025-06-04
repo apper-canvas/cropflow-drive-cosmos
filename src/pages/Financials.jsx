@@ -895,7 +895,7 @@ Profitability Analysis by Crop
                   </p>
 </div>
               )}
-            </div>
+</div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Profit by Crop Chart */}
@@ -926,49 +926,48 @@ Profitability Analysis by Crop
                       type="bar"
                       height={300}
                     />
-                  </div>
-                </motion.div>
+                </div>
+              </motion.div>
 
-                {/* Revenue vs Expenses Chart */}
-                <motion.div variants={itemVariants}>
-                  <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
-                    <h4 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">
-                      Revenue vs Expenses
-                    </h4>
-                    <ReactApexCharts
-                      options={{
-                        chart: { type: 'bar', background: 'transparent' },
-                        xaxis: { categories: Object.keys(currentProfitabilityData) },
-                        colors: ['#22C55E', '#EF4444'],
-                        legend: { position: 'top' },
-                        plotOptions: { bar: { columnWidth: '60%', borderRadius: 4 } },
-                        dataLabels: { enabled: false },
-                        yaxis: {
-                          labels: {
-                            formatter: function (val) {
-                              return '$' + val.toFixed(0)
-                            }
+              {/* Revenue vs Expenses Chart */}
+              <motion.div variants={itemVariants}>
+                <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
+                  <h4 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">
+                    Revenue vs Expenses
+                  </h4>
+                  <ReactApexCharts
+                    options={{
+                      chart: { type: 'bar', background: 'transparent' },
+                      xaxis: { categories: Object.keys(currentProfitabilityData) },
+                      colors: ['#22C55E', '#EF4444'],
+                      legend: { position: 'top' },
+                      plotOptions: { bar: { columnWidth: '60%', borderRadius: 4 } },
+                      dataLabels: { enabled: false },
+                      yaxis: {
+                        labels: {
+                          formatter: function (val) {
+                            return '$' + val.toFixed(0)
                           }
                         }
-                      }}
-                      series={[
-                        {
-                          name: 'Income',
-                          data: Object.values(currentProfitabilityData).map(data => data.income || 0)
-                        },
-                        {
-                          name: 'Expenses',
-                          data: Object.values(currentProfitabilityData).map(data => data.expenses || 0)
-                        }
-]}
-type="bar"
-                      height={300}
-                    />
-</div>
-                </motion.div>
-              </div>
-            </motion.div>
-          </div>
+                      }
+                    }}
+                    series={[
+                      {
+                        name: 'Income',
+                        data: Object.values(currentProfitabilityData).map(data => data.income || 0)
+                      },
+                      {
+                        name: 'Expenses',
+                        data: Object.values(currentProfitabilityData).map(data => data.expenses || 0)
+                      }
+                    ]}
+                    type="bar"
+                    height={300}
+                  />
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
         )}
         {/* Add Expense Modal */}
         {showAddModal && (
