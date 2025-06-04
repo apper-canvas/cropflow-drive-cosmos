@@ -423,15 +423,72 @@ toast.error('Failed to delete expense')
               </h1>
               <p className="text-earth-600 dark:text-earth-300 text-sm sm:text-base">
                 Analyze costs per field and crop to optimize your farm's profitability
-              </p>
+</p>
             </div>
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-xl font-medium transition-all shadow-earth hover:shadow-earth-hover"
-            >
-              <ApperIcon name="Plus" className="h-5 w-5 inline mr-2" />
-              Add Expense
-            </button>
+            <div className="flex items-center gap-4">
+              {activeTab === 'expenses' && (
+                <button
+                  onClick={() => setShowAddModal(true)}
+                  className="bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-xl font-medium transition-all shadow-earth hover:shadow-earth-hover"
+                >
+                  <ApperIcon name="Plus" className="h-5 w-5 inline mr-2" />
+                  Add Expense
+                </button>
+              )}
+              
+              {activeTab === 'income' && (
+                <button
+                  onClick={() => setShowAddIncomeModal(true)}
+                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-earth hover:shadow-earth-hover"
+                >
+                  <ApperIcon name="Plus" className="h-5 w-5 inline mr-2" />
+                  Add Income
+                </button>
+)}
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Tab Navigation */}
+        <motion.div variants={itemVariants} className="mb-8">
+          <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
+            <div className="flex space-x-1 bg-earth-100 dark:bg-earth-700 p-1 rounded-xl">
+              <button
+                onClick={() => setActiveTab('expenses')}
+                className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all ${
+                  activeTab === 'expenses'
+                    ? 'bg-white dark:bg-earth-600 text-primary shadow-sm'
+                    : 'text-earth-600 dark:text-earth-400 hover:text-earth-800 dark:hover:text-earth-200'
+                }`}
+              >
+                <ApperIcon name="Receipt" className="h-5 w-5 inline mr-2" />
+                Expenses
+              </button>
+              
+              <button
+                onClick={() => setActiveTab('income')}
+                className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all ${
+                  activeTab === 'income'
+                    ? 'bg-white dark:bg-earth-600 text-green-600 shadow-sm'
+                    : 'text-earth-600 dark:text-earth-400 hover:text-earth-800 dark:hover:text-earth-200'
+                }`}
+              >
+                <ApperIcon name="TrendingUp" className="h-5 w-5 inline mr-2" />
+                Income
+              </button>
+              
+              <button
+                onClick={() => setActiveTab('profitability')}
+                className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all ${
+                  activeTab === 'profitability'
+                    ? 'bg-white dark:bg-earth-600 text-blue-600 shadow-sm'
+                    : 'text-earth-600 dark:text-earth-400 hover:text-earth-800 dark:hover:text-earth-200'
+                }`}
+              >
+                <ApperIcon name="BarChart3" className="h-5 w-5 inline mr-2" />
+                Profitability Reports
+              </button>
+            </div>
           </div>
         </motion.div>
 
@@ -589,11 +646,11 @@ toast.error('Failed to delete expense')
                   <option value="maintenance">Maintenance</option>
                 </select>
               </div>
-            </div>
+</div>
           </div>
-</motion.div>
+        </motion.div>
 
-{/* Content Area */}
+        {/* Content Area */}
         {activeTab === 'expenses' && (
           <motion.div variants={itemVariants} className="space-y-4">
             {filteredExpenses.length > 0 ? (
@@ -835,9 +892,8 @@ toast.error('Failed to delete expense')
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <ApperIcon name="BarChart3" className="h-12 w-12 text-earth-400 mx-auto mb-4" />
+<ApperIcon name="BarChart3" className="h-12 w-12 text-earth-400 mx-auto mb-4" />
                   <p className="text-earth-600 dark:text-earth-400">No profitability data available</p>
-<p className="text-earth-600 dark:text-earth-400">No profitability data available</p>
                   <p className="text-sm text-earth-500 dark:text-earth-500 mt-2">
                     Add income and expense records to see profitability analysis
                   </p>
@@ -865,9 +921,9 @@ toast.error('Failed to delete expense')
                             return '$' + val.toFixed(0)
                           }
                         }
-                      }
+}
                     }}
-series={[{
+                    series={[{
                       name: 'Profit/Loss',
                       data: Object.values(currentProfitabilityData).map(data => data.profit || 0)
                     }]}
@@ -880,9 +936,9 @@ series={[{
                 <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
                   <h4 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">
                     Revenue vs Expenses
-                  </h4>
+</h4>
                   <ReactApexCharts
-options={{
+                    options={{
                       chart: { type: 'bar', background: 'transparent' },
                       xaxis: { categories: Object.keys(currentProfitabilityData) },
                       colors: ['#22C55E', '#EF4444'],
@@ -896,9 +952,9 @@ options={{
                           }
                         }
                       }
-                    }}
+}}
                     series={[
-{
+                      {
                         name: 'Income',
                         data: Object.values(currentProfitabilityData).map(data => data.income || 0)
                       },
@@ -909,13 +965,12 @@ options={{
                     ]}
                     type="bar"
                     height={300}
-                  />
+/>
                 </div>
               </div>
-            )}
+            </div>
           </motion.div>
         )}
-
         {/* Add Expense Modal */}
         {showAddModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -977,9 +1032,9 @@ options={{
                       <option value="">Select category</option>
                       <option value="seeds">Seeds</option>
                       <option value="fertilizer">Fertilizer</option>
-                      <option value="equipment">Equipment</option>
+<option value="equipment">Equipment</option>
                       <option value="labor">Labor</option>
-<option value="fuel">Fuel</option>
+                      <option value="fuel">Fuel</option>
                       <option value="maintenance">Maintenance</option>
                     </select>
                   </div>
@@ -1112,9 +1167,9 @@ options={{
                       <option value="">Select category</option>
                       <option value="seeds">Seeds</option>
                       <option value="fertilizer">Fertilizer</option>
-                      <option value="equipment">Equipment</option>
+<option value="equipment">Equipment</option>
                       <option value="labor">Labor</option>
-<option value="fuel">Fuel</option>
+                      <option value="fuel">Fuel</option>
                       <option value="maintenance">Maintenance</option>
                     </select>
                   </div>
@@ -1176,9 +1231,9 @@ options={{
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg transition-colors"
+className="flex-1 bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg transition-colors"
                   >
-Update Expense
+                    Update Expense
                   </button>
                 </div>
               </form>
