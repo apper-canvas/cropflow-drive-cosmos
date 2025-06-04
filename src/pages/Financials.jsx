@@ -964,13 +964,14 @@ toast.error('Failed to delete expense')
                       }
                     ]}
                     type="bar"
-                    height={300}
-/>
-                </div>
+height={300}
+                  />
+</div>
               </div>
             </div>
           </motion.div>
         )}
+
         {/* Add Expense Modal */}
         {showAddModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
