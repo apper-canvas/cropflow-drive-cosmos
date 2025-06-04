@@ -7,6 +7,7 @@ import { expenseService } from '../services'
 
 const Financials = () => {
   const [expenses, setExpenses] = useState([])
+  const [fields, setFields] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
@@ -25,9 +26,10 @@ const Financials = () => {
 
   useEffect(() => {
     loadExpenses()
+    loadFields()
   }, [])
 
-  const loadExpenses = async () => {
+const loadExpenses = async () => {
     setLoading(true)
     try {
       const result = await expenseService.getAll()
@@ -37,6 +39,17 @@ const Financials = () => {
       toast.error('Failed to load expenses')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const loadFields = async () => {
+    try {
+      const { fieldService } = await import('../services')
+      const result = await fieldService.getAll()
+      setFields(result || [])
+    } catch (err) {
+      console.error('Failed to load fields:', err)
+      toast.error('Failed to load fields')
     }
   }
 
@@ -492,18 +505,24 @@ const Financials = () => {
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-2 gap-4">
+<div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
                       Field
                     </label>
-                    <input
-                      type="text"
+                    <select
                       value={newExpense.field}
                       onChange={(e) => setNewExpense({...newExpense, field: e.target.value})}
                       className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
                       required
-                    />
+                    >
+                      <option value="">Select field</option>
+                      {fields.map((field) => (
+                        <option key={field.id} value={field.name}>
+                          {field.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
@@ -621,18 +640,24 @@ const Financials = () => {
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-2 gap-4">
+<div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
                       Field
                     </label>
-                    <input
-                      type="text"
+                    <select
                       value={editingExpense.field}
                       onChange={(e) => setEditingExpense({...editingExpense, field: e.target.value})}
                       className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
                       required
-                    />
+                    >
+                      <option value="">Select field</option>
+                      {fields.map((field) => (
+                        <option key={field.id} value={field.name}>
+                          {field.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
