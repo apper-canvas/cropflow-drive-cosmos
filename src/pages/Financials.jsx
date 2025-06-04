@@ -837,23 +837,23 @@ toast.error('Failed to delete expense')
                 <div className="text-center py-8">
                   <ApperIcon name="BarChart3" className="h-12 w-12 text-earth-400 mx-auto mb-4" />
                   <p className="text-earth-600 dark:text-earth-400">No profitability data available</p>
+<p className="text-earth-600 dark:text-earth-400">No profitability data available</p>
                   <p className="text-sm text-earth-500 dark:text-earth-500 mt-2">
                     Add income and expense records to see profitability analysis
                   </p>
                 </div>
               )}
             </div>
-</div>
 
             {/* Profitability Charts */}
-            {Object.keys(currentProfitabilityData).length > 0 && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Profit by Crop Chart */}
-                <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
-                    Profit by Crop
-                  </h4>
-                  <ReactApexCharts
-options={{
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Profit by Crop Chart */}
+              <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
+                <h4 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">
+                  Profit by Crop
+                </h4>
+                <ReactApexCharts
+                  options={{
                       chart: { type: 'bar', background: 'transparent' },
                       xaxis: { categories: Object.keys(currentProfitabilityData) },
                       colors: ['#22C55E', '#EF4444'],
