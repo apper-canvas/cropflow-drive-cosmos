@@ -7,18 +7,20 @@ import { expenseService } from '../services'
 
 const Financials = () => {
   const [expenses, setExpenses] = useState([])
-  const [budgets, setBudgets] = useState([])
+const [budgets, setBudgets] = useState([])
   const [fields, setFields] = useState([])
-const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [sortBy, setSortBy] = useState('date')
   const [filterBy, setFilterBy] = useState('all')
-const [showAddModal, setShowAddModal] = useState(false)
+const [sortBy, setSortBy] = useState('date')
+  const [filterBy, setFilterBy] = useState('all')
+  const [showAddModal, setShowAddModal] = useState(false)
   const [editingExpense, setEditingExpense] = useState(null)
   const [showAddIncomeModal, setShowAddIncomeModal] = useState(false)
   const [editingIncome, setEditingIncome] = useState(null)
-const [activeTab, setActiveTab] = useState('expenses')
+  const [activeTab, setActiveTab] = useState('expenses')
   const [filteredIncome, setFilteredIncome] = useState([])
   const [profitabilityData, setProfitabilityData] = useState({})
   const [newExpense, setNewExpense] = useState({
@@ -43,9 +45,9 @@ const [activeTab, setActiveTab] = useState('expenses')
 
   useEffect(() => {
     loadExpenses()
-    loadBudgets()
+loadBudgets()
     loadFields()
-}, [])
+  }, [])
 
   const loadExpenses = async () => {
     setLoading(true)
@@ -67,9 +69,9 @@ const [activeTab, setActiveTab] = useState('expenses')
       setFields(result || [])
     } catch (err) {
       console.error('Failed to load fields:', err)
-      toast.error('Failed to load fields')
+toast.error('Failed to load fields')
     }
-}
+  }
 
   const loadBudgets = async () => {
     try {
@@ -109,9 +111,9 @@ const [activeTab, setActiveTab] = useState('expenses')
   const handleDeleteExpense = async (expenseId) => {
     if (window.confirm('Are you sure you want to delete this expense?')) {
       try {
-        await expenseService.delete(expenseId)
+await expenseService.delete(expenseId)
         setExpenses(prev => prev.filter(e => e.id !== expenseId))
-toast.success('Expense deleted successfully!')
+        toast.success('Expense deleted successfully!')
       } catch (err) {
         toast.error('Failed to delete expense')
       }
@@ -174,9 +176,9 @@ toast.success('Expense deleted successfully!')
     .sort((a, b) => {
       if (sortBy === 'date') return new Date(b.date) - new Date(a.date)
       if (sortBy === 'amount') return parseFloat(b.amount) - parseFloat(a.amount)
-      if (sortBy === 'category') return a.category.localeCompare(b.category)
+if (sortBy === 'category') return a.category.localeCompare(b.category)
       return 0
-})
+    })
 
   // Calculate summary statistics
   const totalExpenses = expenses.reduce((sum, expense) => sum + parseFloat(expense.amount), 0)
@@ -414,9 +416,9 @@ toast.success('Expense deleted successfully!')
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8"
       >
         {/* Header */}
-        <motion.div variants={itemVariants} className="mb-8">
+<motion.div variants={itemVariants} className="mb-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-<div>
+            <div>
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-earth-800 dark:text-earth-100 mb-2">
                 Financial Tracking
               </h1>
@@ -435,9 +437,9 @@ toast.success('Expense deleted successfully!')
                 </button>
               )}
               
-              {activeTab === 'income' && (
+{activeTab === 'income' && (
                 <button
-onClick={() => setShowAddIncomeModal(true)}
+                  onClick={() => setShowAddIncomeModal(true)}
                   className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-earth hover:shadow-earth-hover"
                 >
                   <ApperIcon name="Plus" className="h-5 w-5 inline mr-2" />
@@ -515,9 +517,9 @@ onClick={() => setShowAddIncomeModal(true)}
               </div>
               <ApperIcon name="Calendar" className="h-8 w-8 text-blue-600" />
             </div>
-          </div>
+</div>
           
-<div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
+          <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-earth-600 dark:text-earth-400 text-sm mb-1">Avg per Expense</p>
@@ -637,9 +639,8 @@ onClick={() => setShowAddIncomeModal(true)}
                   className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
                 >
                   <option value="all">All Categories</option>
-                  <option value="seeds">Seeds</option>
-                  <option value="fertilizer">Fertilizer</option>
-<option value="equipment">Equipment</option>
+<option value="fertilizer">Fertilizer</option>
+                  <option value="equipment">Equipment</option>
                   <option value="labor">Labor</option>
                   <option value="fuel">Fuel</option>
                   <option value="maintenance">Maintenance</option>
@@ -831,9 +832,9 @@ onClick={() => setShowAddIncomeModal(true)}
               </div>
             )}
           </motion.div>
-        )}
+)}
 
-{activeTab === 'profitability' && (
+        {activeTab === 'profitability' && (
           <motion.div variants={itemVariants} className="space-y-8">
             {/* Profitability by Crop Table */}
             <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
@@ -845,9 +846,9 @@ onClick={() => setShowAddIncomeModal(true)}
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-earth-200 dark:border-earth-700">
+<tr className="border-b border-earth-200 dark:border-earth-700">
                         <th className="text-left py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Crop</th>
-<th className="text-right py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Income</th>
+                        <th className="text-right py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Income</th>
                         <th className="text-right py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Expenses</th>
                         <th className="text-right py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Profit/Loss</th>
                         <th className="text-right py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Margin</th>
@@ -883,9 +884,9 @@ onClick={() => setShowAddIncomeModal(true)}
                             }`}>
                               {data.profit >= 0 ? 'Profitable' : 'Loss'}
                             </span>
-                          </td>
+</td>
                         </tr>
-))}
+                      ))}
                     </tbody>
                   </table>
                 </div>
@@ -902,6 +903,7 @@ onClick={() => setShowAddIncomeModal(true)}
 
             {/* Profitability Charts */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Profit by Crop Chart */}
               <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
                 <h4 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">
@@ -924,7 +926,7 @@ onClick={() => setShowAddIncomeModal(true)}
                     }}
                     series={[{
                       name: 'Profit/Loss',
-data: Object.values(currentProfitabilityData).map(data => data.profit || 0)
+                      data: Object.values(currentProfitabilityData).map(data => data.profit || 0)
                     }]}
                     type="bar"
                     height={300}
@@ -932,7 +934,7 @@ data: Object.values(currentProfitabilityData).map(data => data.profit || 0)
                 </div>
 
                 {/* Revenue vs Expenses Chart */}
-<div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
+                <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
                   <h4 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">
                     Revenue vs Expenses
                   </h4>
@@ -959,15 +961,14 @@ data: Object.values(currentProfitabilityData).map(data => data.profit || 0)
                       },
                       {
                         name: 'Expenses',
-data: Object.values(currentProfitabilityData).map(data => data.expenses || 0)
+                        data: Object.values(currentProfitabilityData).map(data => data.expenses || 0)
                       }
                     ]}
                     type="bar"
                     height={300}
                   />
                 </div>
-              </div>
-            </motion.div>
+            </div>
           </motion.div>
         )}
 
@@ -1024,11 +1025,11 @@ data: Object.values(currentProfitabilityData).map(data => data.expenses || 0)
                       Category
                     </label>
                     <select
+<select
                       value={newExpense.category}
                       onChange={(e) => setNewExpense({...newExpense, category: e.target.value})}
-className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                      className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
                       required
-                    >
                       <option value="">Select category</option>
                       <option value="seeds">Seeds</option>
                       <option value="fertilizer">Fertilizer</option>
@@ -1159,11 +1160,11 @@ className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounde
                       Category
                     </label>
                     <select
+<select
                       value={editingExpense.category}
                       onChange={(e) => setEditingExpense({...editingExpense, category: e.target.value})}
-className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                      className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
                       required
-                    >
                       <option value="">Select category</option>
                       <option value="seeds">Seeds</option>
                       <option value="fertilizer">Fertilizer</option>
@@ -1223,11 +1224,11 @@ className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounde
                 
                 <div className="flex gap-3 pt-4">
                   <button
+<button
                     type="button"
                     onClick={() => setEditingExpense(null)}
-className="flex-1 px-4 py-2 border border-earth-300 dark:border-earth-600 text-earth-700 dark:text-earth-300 rounded-lg hover:bg-earth-50 dark:hover:bg-earth-700 transition-colors"
+                    className="flex-1 px-4 py-2 border border-earth-300 dark:border-earth-600 text-earth-700 dark:text-earth-300 rounded-lg hover:bg-earth-50 dark:hover:bg-earth-700 transition-colors"
                   >
-                    Cancel
                   </button>
                   <button
                     type="submit"
