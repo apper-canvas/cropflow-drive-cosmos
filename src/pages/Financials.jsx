@@ -419,9 +419,9 @@ toast.error('Failed to delete expense')
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-earth-800 dark:text-earth-100 mb-2">
-                Financial Tracking
+Financial Tracking
               </h1>
-<p className="text-earth-600 dark:text-earth-300 text-sm sm:text-base">
+              <p className="text-earth-600 dark:text-earth-300 text-sm sm:text-base">
                 Analyze costs per field and crop to optimize your farm's profitability
               </p>
             </div>
@@ -440,9 +440,9 @@ toast.error('Failed to delete expense')
                 <button
                   onClick={() => setShowAddIncomeModal(true)}
                   className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-earth hover:shadow-earth-hover"
-                >
+>
                   <ApperIcon name="Plus" className="h-5 w-5 inline mr-2" />
-Add Income
+                  Add Income
                 </button>
               )}
             </div>
@@ -520,9 +520,9 @@ Add Income
           
           <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
             <div className="flex items-center justify-between">
-              <div>
+<div>
                 <p className="text-earth-600 dark:text-earth-400 text-sm mb-1">Avg per Expense</p>
-<p className="text-2xl font-bold text-earth-800 dark:text-earth-100">
+                <p className="text-2xl font-bold text-earth-800 dark:text-earth-100">
                   ${expenses.length > 0 ? (totalExpenses / expenses.length).toFixed(2) : '0.00'}
                 </p>
               </div>
@@ -642,9 +642,9 @@ Add Income
                   <option value="fertilizer">Fertilizer</option>
                   <option value="equipment">Equipment</option>
                   <option value="labor">Labor</option>
-                  <option value="fuel">Fuel</option>
+<option value="fuel">Fuel</option>
                   <option value="maintenance">Maintenance</option>
-</select>
+                </select>
               </div>
             </div>
           </div>
@@ -836,9 +836,9 @@ Add Income
 
         {activeTab === 'profitability' && (
           <motion.div variants={itemVariants} className="space-y-8">
-            {/* Profitability by Crop Table */}
+{/* Profitability by Crop Table */}
             <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
-<h3 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-6">
+              <h3 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-6">
                 Profitability Analysis by Crop
               </h3>
               
@@ -850,9 +850,9 @@ Add Income
                         <th className="text-left py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Crop</th>
                         <th className="text-right py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Income</th>
                         <th className="text-right py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Expenses</th>
-                        <th className="text-right py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Profit/Loss</th>
+<th className="text-right py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Profit/Loss</th>
                         <th className="text-right py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Margin</th>
-<th className="text-center py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Status</th>
+                        <th className="text-center py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Status</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -888,9 +888,9 @@ Add Income
                         </tr>
                       ))}
                     </tbody>
-                  </table>
+</table>
                 </div>
-) : (
+              ) : (
                 <div className="text-center py-8">
                   <ApperIcon name="BarChart3" className="h-12 w-12 text-earth-400 mx-auto mb-4" />
                   <p className="text-earth-600 dark:text-earth-400">No profitability data available</p>
@@ -899,7 +899,7 @@ Add Income
                   </p>
                 </div>
               )}
-</div>
+            </div>
 
             {/* Profitability Charts */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -962,15 +962,16 @@ Add Income
                         name: 'Expenses',
                         data: Object.values(currentProfitabilityData).map(data => data.expenses || 0)
                       }
-                    ]}
+]}
                     type="bar"
                     height={300}
                   />
                 </div>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
         )}
+
         {/* Add Expense Modal */}
         {showAddModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -1028,9 +1029,9 @@ Add Income
                       onChange={(e) => setNewExpense({...newExpense, category: e.target.value})}
                       className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
                       required
-                    >
+>
                       <option value="">Select category</option>
-<option value="seeds">Seeds</option>
+                      <option value="seeds">Seeds</option>
                       <option value="fertilizer">Fertilizer</option>
                       <option value="equipment">Equipment</option>
                       <option value="labor">Labor</option>
@@ -1163,9 +1164,9 @@ Add Income
                       onChange={(e) => setEditingExpense({...editingExpense, category: e.target.value})}
                       className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
                       required
-                    >
+>
                       <option value="">Select category</option>
-<option value="seeds">Seeds</option>
+                      <option value="seeds">Seeds</option>
                       <option value="fertilizer">Fertilizer</option>
                       <option value="equipment">Equipment</option>
                       <option value="labor">Labor</option>
@@ -1227,9 +1228,9 @@ Add Income
                     onClick={() => setEditingExpense(null)}
                     className="flex-1 px-4 py-2 border border-earth-300 dark:border-earth-600 text-earth-700 dark:text-earth-300 rounded-lg hover:bg-earth-50 dark:hover:bg-earth-700 transition-colors"
                   >
-                    Cancel
+Cancel
                   </button>
-<button
+                  <button
                     type="submit"
                     className="flex-1 bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg transition-colors"
                   >
