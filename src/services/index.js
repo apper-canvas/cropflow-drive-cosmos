@@ -15,7 +15,8 @@ export const services = {
   expense: () => import('./api/expenseService.js'),
   income: () => import('./api/incomeService.js'),
   crop: () => import('./api/cropService.js'),
-  equipment: () => import('./api/equipmentService.js')
+  equipment: () => import('./api/equipmentService.js'),
+  weather: () => import('./api/weatherService.js')
 }
 
 // Utility function to get service by name

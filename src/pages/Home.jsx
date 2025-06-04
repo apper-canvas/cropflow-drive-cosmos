@@ -106,21 +106,21 @@ const Home = () => {
                   <p>💧 {weatherData.humidity}%</p>
                   <p>🌪️ {weatherData.windSpeed} km/h</p>
                 </div>
-              </div>
+</div>
               
               {/* 5-day forecast */}
               <div className="grid grid-cols-5 gap-2 mt-4">
                 {weatherData.forecast.map((day, index) => (
                   <div key={index} className="text-center">
-                    <p className="text-xs text-earth-600 dark:text-earth-400 mb-1">{day.day}</p>
-                    <p className="text-sm font-medium text-earth-800 dark:text-earth-200">
-                      {day.high}°
-                    </p>
-                    <p className="text-xs text-earth-500 dark:text-earth-400">{day.low}°</p>
-                    <p className="text-xs text-blue-600 dark:text-blue-400">{day.rain}%</p>
-                  </div>
-                ))}
-              </div>
+                      <p className="text-xs text-earth-600 dark:text-earth-400 mb-1">{day.day}</p>
+                      <p className="text-sm font-medium text-earth-800 dark:text-earth-200">
+                        {day.high}°
+                      </p>
+                      <p className="text-xs text-earth-500 dark:text-earth-400">{day.low}°</p>
+                      <p className="text-xs text-blue-600 dark:text-blue-400">{day.rain}%</p>
+</div>
+                  ))}
+                </div>
             </div>
           </div>
         </motion.div>
