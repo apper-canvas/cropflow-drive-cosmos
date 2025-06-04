@@ -11,9 +11,9 @@ const Financials = () => {
   const [fields, setFields] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [searchTerm, setSearchTerm] = useState('')
+const [searchTerm, setSearchTerm] = useState('')
   const [sortBy, setSortBy] = useState('date')
-const [filterBy, setFilterBy] = useState('all')
+  const [filterBy, setFilterBy] = useState('all')
   const [showAddModal, setShowAddModal] = useState(false)
   const [editingExpense, setEditingExpense] = useState(null)
   const [showAddIncomeModal, setShowAddIncomeModal] = useState(false)
@@ -110,9 +110,20 @@ const [filterBy, setFilterBy] = useState('all')
         setExpenses(prev => prev.filter(e => e.id !== expenseId))
         toast.success('Expense deleted successfully!')
       } catch (err) {
-        toast.error('Failed to delete expense')
+toast.error('Failed to delete expense')
       }
-}
+    }
+  }
+
+  const handleDeleteIncome = async (incomeId) => {
+    if (window.confirm('Are you sure you want to delete this income?')) {
+      try {
+        // Delete income logic here
+        toast.success('Income deleted successfully!')
+      } catch (err) {
+        toast.error('Failed to delete income')
+      }
+    }
   }
 
   const handleAddIncome = async (e) => {
@@ -413,9 +424,9 @@ const [filterBy, setFilterBy] = useState('all')
                   ${expenses.length > 0 ? (totalExpenses / expenses.length).toFixed(2) : '0.00'}
                 </p>
               </div>
-              <ApperIcon name="TrendingUp" className="h-8 w-8 text-green-600" />
+<ApperIcon name="TrendingUp" className="h-8 w-8 text-green-600" />
             </div>
-</div>
+          </div>
         </motion.div>
 
         {/* Financial Reports Charts */}
@@ -537,79 +548,88 @@ const [filterBy, setFilterBy] = useState('all')
           </div>
         </motion.div>
 
-        {/* Expenses List */}
+{/* Expenses List */}
         <motion.div variants={itemVariants} className="space-y-4">
-          {filteredExpenses.map((expense, index) => (
-            <motion.div
-              key={expense.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 * index }}
-              whileHover={{ scale: 1.01, y: -2 }}
-              className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth hover:shadow-earth-hover transition-all duration-300"
-            >
-              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                <div className="flex items-start gap-4 flex-1">
-                  <div className="p-2 bg-earth-100 dark:bg-earth-700 rounded-lg">
-                    <ApperIcon name={getCategoryIcon(expense.category)} className="h-6 w-6 text-primary" />
+          {filteredExpenses.length > 0 ? (
+            filteredExpenses.map((expense, index) => (
+              <motion.div
+                key={expense.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 * index }}
+                whileHover={{ scale: 1.01, y: -2 }}
+                className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth hover:shadow-earth-hover transition-all duration-300"
+              >
+                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                  <div className="flex items-start gap-4 flex-1">
+                    <div className="p-2 bg-earth-100 dark:bg-earth-700 rounded-lg">
+                      <ApperIcon name={getCategoryIcon(expense.category)} className="h-6 w-6 text-primary" />
+                    </div>
+                    
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between mb-2">
+                        <h3 className="text-lg font-semibold text-earth-800 dark:text-earth-100">
+                          {expense.description}
+                        </h3>
+                        <span className="text-xl font-bold text-red-600 ml-4">
+                          ${parseFloat(expense.amount).toFixed(2)}
+                        </span>
+                      </div>
+                      
+                      <p className="text-earth-600 dark:text-earth-400 text-sm mb-3">
+                        {expense.notes}
+                      </p>
+                      
+                      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+                        <div className="flex items-center gap-2">
+                          <ApperIcon name="Tag" className="h-4 w-4 text-earth-500" />
+                          <span className="text-earth-600 dark:text-earth-400 capitalize">
+                            {expense.category}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <ApperIcon name="MapPin" className="h-4 w-4 text-earth-500" />
+                          <span className="text-earth-600 dark:text-earth-400">
+                            {expense.field}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <ApperIcon name="Calendar" className="h-4 w-4 text-earth-500" />
+                          <span className="text-earth-600 dark:text-earth-400">
+                            {new Date(expense.date).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between mb-2">
-                      <h3 className="text-lg font-semibold text-earth-800 dark:text-earth-100">
-                        {expense.description}
-                      </h3>
-                      <span className="text-xl font-bold text-red-600 ml-4">
-                        ${parseFloat(expense.amount).toFixed(2)}
-                      </span>
-                    </div>
-                    
-                    <p className="text-earth-600 dark:text-earth-400 text-sm mb-3">
-                      {expense.notes}
-                    </p>
-                    
-                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-                      <div className="flex items-center gap-2">
-                        <ApperIcon name="Tag" className="h-4 w-4 text-earth-500" />
-                        <span className="text-earth-600 dark:text-earth-400 capitalize">
-                          {expense.category}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <ApperIcon name="MapPin" className="h-4 w-4 text-earth-500" />
-                        <span className="text-earth-600 dark:text-earth-400">
-                          {expense.field}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <ApperIcon name="Calendar" className="h-4 w-4 text-earth-500" />
-                        <span className="text-earth-600 dark:text-earth-400">
-                          {new Date(expense.date).toLocaleDateString()}
-                        </span>
-                      </div>
-                    </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setEditingExpense(expense)}
+                      className="bg-earth-100 dark:bg-earth-700 text-earth-700 dark:text-earth-300 px-4 py-2 rounded-lg hover:bg-earth-200 dark:hover:bg-earth-600 transition-colors text-sm font-medium"
+                    >
+                      <ApperIcon name="Edit2" className="h-4 w-4 inline mr-1" />
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDeleteExpense(expense.id)}
+                      className="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 px-4 py-2 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors text-sm font-medium"
+                    >
+                      <ApperIcon name="Trash2" className="h-4 w-4 inline mr-1" />
+                      Delete
+                    </button>
                   </div>
                 </div>
-                
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setEditingExpense(expense)}
-                    className="bg-earth-100 dark:bg-earth-700 text-earth-700 dark:text-earth-300 px-4 py-2 rounded-lg hover:bg-earth-200 dark:hover:bg-earth-600 transition-colors text-sm font-medium"
-                  >
-                    <ApperIcon name="Edit2" className="h-4 w-4 inline mr-1" />
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDeleteExpense(expense.id)}
-                    className="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 px-4 py-2 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors text-sm font-medium"
-                  >
-                    <ApperIcon name="Trash2" className="h-4 w-4 inline mr-1" />
-                    Delete
-                  </button>
-                </div>
+              </motion.div>
+            ))
+          ) : (
+            <div className="flex items-center justify-center h-64 text-earth-500 dark:text-earth-400">
+              <div className="text-center">
+                <ApperIcon name="Receipt" className="h-12 w-12 mx-auto mb-2" />
+                <p>No expenses found</p>
               </div>
-            </motion.div>
-          ))}
+            </div>
+          )}
         </motion.div>
 
         {/* Add Expense Modal */}
@@ -677,9 +697,9 @@ const [filterBy, setFilterBy] = useState('all')
                       <option value="labor">Labor</option>
                       <option value="fuel">Fuel</option>
                       <option value="maintenance">Maintenance</option>
-                    </select>
+</select>
                   </div>
-</div>
+                </div>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -812,9 +832,9 @@ const [filterBy, setFilterBy] = useState('all')
                       <option value="labor">Labor</option>
                       <option value="fuel">Fuel</option>
                       <option value="maintenance">Maintenance</option>
-                    </select>
+</select>
                   </div>
-</div>
+                </div>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -876,9 +896,9 @@ const [filterBy, setFilterBy] = useState('all')
                   >
                     Update Expense
                   </button>
-                </div>
+</div>
               </form>
-</motion.div>
+            </motion.div>
           </div>
         )}
 

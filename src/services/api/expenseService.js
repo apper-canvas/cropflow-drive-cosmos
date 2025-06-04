@@ -132,21 +132,108 @@ let budgets = [
 let income = []
 
 const expenseService = {
-  // Expense operations
+// Expense operations
   async getExpenses() {
     await delay(300)
     return [...expenses]
   },
 
-  async getExpenseById(id) {
-    await delay(200)
-    const expense = expenses.find(item => item.id === id)
-    if (!expense) throw new Error('Expense not found')
-    return { ...expense }
+  // Income operations
+  getIncomes: async () => {
+    await delay(300)
+    return income
+  },
+
+  createIncome: async (incomeData) => {
+    await delay(500)
+    const newIncome = {
+      ...incomeData,
+      id: Date.now(),
+      amount: parseFloat(incomeData.amount)
+    }
+    income.push(newIncome)
+    return newIncome
+  },
+
+  updateIncome: async (id, incomeData) => {
+    await delay(500)
+    const index = income.findIndex(i => i.id === parseInt(id))
+    if (index === -1) {
+      throw new Error('Income record not found')
+    }
+    income[index] = { 
+      ...income[index], 
+      ...incomeData, 
+      id: parseInt(id),
+      amount: parseFloat(incomeData.amount)
+    }
+    return income[index]
+  },
+
+  deleteIncome: async (id) => {
+    await delay(300)
+    const index = income.findIndex(i => i.id === parseInt(id))
+    if (index === -1) {
+      throw new Error('Income record not found')
+    }
+    income.splice(index, 1)
+    return true
+  },
+
+  // Profitability calculations
+  getProfitabilityByCrop: async () => {
+    await delay(300)
+    const cropData = {}
+    
+    // Calculate income by crop
+    income.forEach(incomeItem => {
+      if (!cropData[incomeItem.cropType]) {
+        cropData[incomeItem.cropType] = { income: 0, expenses: 0 }
+      }
+      cropData[incomeItem.cropType].income += parseFloat(incomeItem.amount)
+    })
+
+    // Calculate expenses by field/crop (simplified)
+    expenses.forEach(expense => {
+      // This is simplified - in a real app, you'd have crop-expense mapping
+      const estimatedCrops = ['Corn', 'Wheat', 'Soybeans', 'Barley']
+      estimatedCrops.forEach(crop => {
+        if (!cropData[crop]) {
+          cropData[crop] = { income: 0, expenses: 0 }
+        }
+        cropData[crop].expenses += parseFloat(expense.amount) / estimatedCrops.length
+      })
+    })
+
+    // Calculate profit/loss
+    Object.keys(cropData).forEach(crop => {
+      cropData[crop].profit = cropData[crop].income - cropData[crop].expenses
+      cropData[crop].margin = cropData[crop].income > 0 
+        ? ((cropData[crop].profit / cropData[crop].income) * 100).toFixed(2)
+        : 0
+    })
+
+    return cropData
+  },
+
+  // Budget operations
+  getBudgets: async () => {
+    await delay(300)
+    return budgets
+  },
+
+  createBudget: async (budgetData) => {
+    await delay(500)
+const newBudget = {
+      ...budgetData,
+      id: Date.now().toString()
+    }
+    budgets = [newBudget, ...budgets]
+    return { ...newBudget }
   },
 
   async createExpense(expenseData) {
-    await delay(400)
+    await delay(500)
     const newExpense = {
       ...expenseData,
       id: Date.now().toString()
@@ -250,13 +337,13 @@ const expenseService = {
     const categoryTotals = {}
     expenses.forEach(expense => {
       if (!categoryTotals[expense.category]) {
+if (!categoryTotals[expense.category]) {
         categoryTotals[expense.category] = 0
       }
-categoryTotals[expense.category] += expense.amount
+      categoryTotals[expense.category] += expense.amount
     })
     return categoryTotals
   },
-
   // Income operations
   async getIncome() {
     await delay(300)
@@ -333,16 +420,17 @@ categoryTotals[expense.category] += expense.amount
       }
     })
     return cropTotals
-  },
+},
 
-async getProfitabilityByCrop() {
+  async getProfitabilityByCrop() {
     await delay(300)
     const incomeByCrop = await this.getTotalIncomeByCrop()
     const expensesByCrop = await this.getTotalExpensesByCrop()
     
     const allCrops = new Set([...Object.keys(incomeByCrop), ...Object.keys(expensesByCrop)])
     const profitability = {}
-allCrops.forEach(crop => {
+    
+    allCrops.forEach(crop => {
       const totalIncome = incomeByCrop[crop] || 0
       const totalExpenses = expensesByCrop[crop] || 0
       const profit = totalIncome - totalExpenses
