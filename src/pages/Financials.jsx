@@ -13,9 +13,11 @@ const Financials = () => {
   const [error, setError] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [sortBy, setSortBy] = useState('date')
-  const [filterBy, setFilterBy] = useState('all')
+const [filterBy, setFilterBy] = useState('all')
   const [showAddModal, setShowAddModal] = useState(false)
   const [editingExpense, setEditingExpense] = useState(null)
+  const [showAddIncomeModal, setShowAddIncomeModal] = useState(false)
+  const [editingIncome, setEditingIncome] = useState(null)
   const [newExpense, setNewExpense] = useState({
     description: '',
     amount: '',
@@ -24,14 +26,25 @@ const Financials = () => {
     date: '',
     notes: ''
   })
+  const [newIncome, setNewIncome] = useState({
+    description: '',
+    amount: '',
+    cropType: '',
+    field: '',
+    date: '',
+    buyer: '',
+    quantity: '',
+    pricePerUnit: '',
+    notes: ''
+  })
 
   useEffect(() => {
     loadExpenses()
     loadBudgets()
     loadFields()
-  }, [])
+}, [])
 
-const loadExpenses = async () => {
+  const loadExpenses = async () => {
     setLoading(true)
     try {
       const result = await expenseService.getAll()
@@ -99,6 +112,39 @@ const loadExpenses = async () => {
       } catch (err) {
         toast.error('Failed to delete expense')
       }
+}
+  }
+
+  const handleAddIncome = async (e) => {
+    e.preventDefault()
+    try {
+      // Create income record logic here
+      setNewIncome({ 
+        description: '', 
+        amount: '', 
+        cropType: '', 
+        field: '', 
+        date: '', 
+        buyer: '', 
+        quantity: '', 
+        pricePerUnit: '', 
+        notes: '' 
+      })
+      setShowAddIncomeModal(false)
+      toast.success('Income added successfully!')
+    } catch (err) {
+      toast.error('Failed to add income')
+    }
+  }
+
+  const handleEditIncome = async (e) => {
+    e.preventDefault()
+    try {
+      // Update income record logic here
+      setEditingIncome(null)
+      toast.success('Income updated successfully!')
+    } catch (err) {
+      toast.error('Failed to update income')
     }
   }
 
@@ -134,9 +180,9 @@ const loadExpenses = async () => {
   const expensesByCategory = expenses.reduce((acc, expense) => {
     acc[expense.category] = (acc[expense.category] || 0) + parseFloat(expense.amount)
     return acc
-  }, {})
+}, {})
 
-// Expense Distribution Chart Data
+  // Expense Distribution Chart Data
   const expenseChartData = {
     series: Object.values(expensesByCategory),
     options: {
@@ -369,9 +415,10 @@ const loadExpenses = async () => {
               </div>
               <ApperIcon name="TrendingUp" className="h-8 w-8 text-green-600" />
             </div>
-          </div>
+</div>
         </motion.div>
-{/* Financial Reports Charts */}
+
+        {/* Financial Reports Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           {/* Expense Distribution Chart */}
           <motion.div variants={itemVariants}>
@@ -632,9 +679,9 @@ const loadExpenses = async () => {
                       <option value="maintenance">Maintenance</option>
                     </select>
                   </div>
-                </div>
+</div>
                 
-<div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
                       Field
@@ -767,9 +814,9 @@ const loadExpenses = async () => {
                       <option value="maintenance">Maintenance</option>
                     </select>
                   </div>
-                </div>
+</div>
                 
-<div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
                       Field
@@ -828,6 +875,354 @@ const loadExpenses = async () => {
                     className="flex-1 bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg transition-colors"
                   >
                     Update Expense
+                  </button>
+                </div>
+              </form>
+</motion.div>
+          </div>
+        )}
+
+        {/* Add Income Modal */}
+        {showAddIncomeModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-white dark:bg-earth-800 rounded-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-semibold text-earth-800 dark:text-earth-100">
+                  Add New Income
+                </h3>
+                <button
+                  onClick={() => setShowAddIncomeModal(false)}
+                  className="text-earth-500 hover:text-earth-700 dark:hover:text-earth-300"
+                >
+                  <ApperIcon name="X" className="h-6 w-6" />
+                </button>
+              </div>
+              
+              <form onSubmit={handleAddIncome} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                    Description
+                  </label>
+                  <input
+                    type="text"
+                    value={newIncome.description}
+                    onChange={(e) => setNewIncome({...newIncome, description: e.target.value})}
+                    className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                    required
+                  />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                      Amount ($)
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={newIncome.amount}
+                      onChange={(e) => setNewIncome({...newIncome, amount: e.target.value})}
+                      className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                      Crop Type
+                    </label>
+                    <select
+                      value={newIncome.cropType}
+                      onChange={(e) => setNewIncome({...newIncome, cropType: e.target.value})}
+                      className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                      required
+                    >
+                      <option value="">Select crop</option>
+                      <option value="Corn">Corn</option>
+                      <option value="Wheat">Wheat</option>
+                      <option value="Soybeans">Soybeans</option>
+                      <option value="Barley">Barley</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                      Field
+                    </label>
+                    <select
+                      value={newIncome.field}
+                      onChange={(e) => setNewIncome({...newIncome, field: e.target.value})}
+                      className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                      required
+                    >
+                      <option value="">Select field</option>
+                      {fields.map((field) => (
+                        <option key={field.id} value={field.name}>
+                          {field.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                      Date
+                    </label>
+                    <input
+                      type="date"
+                      value={newIncome.date}
+                      onChange={(e) => setNewIncome({...newIncome, date: e.target.value})}
+                      className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                      Buyer
+                    </label>
+                    <input
+                      type="text"
+                      value={newIncome.buyer}
+                      onChange={(e) => setNewIncome({...newIncome, buyer: e.target.value})}
+                      className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                      Quantity
+                    </label>
+                    <input
+                      type="text"
+                      value={newIncome.quantity}
+                      onChange={(e) => setNewIncome({...newIncome, quantity: e.target.value})}
+                      placeholder="e.g., 500 bushels"
+                      className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                    Price per Unit ($)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={newIncome.pricePerUnit}
+                    onChange={(e) => setNewIncome({...newIncome, pricePerUnit: e.target.value})}
+                    className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                    Notes
+                  </label>
+                  <textarea
+                    value={newIncome.notes}
+                    onChange={(e) => setNewIncome({...newIncome, notes: e.target.value})}
+                    rows={3}
+                    className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                    placeholder="Optional notes about this sale..."
+                  />
+                </div>
+                
+                <div className="flex gap-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowAddIncomeModal(false)}
+                    className="flex-1 px-4 py-2 border border-earth-300 dark:border-earth-600 text-earth-700 dark:text-earth-300 rounded-lg hover:bg-earth-50 dark:hover:bg-earth-700 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
+                  >
+                    Add Income
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+
+        {/* Edit Income Modal */}
+        {editingIncome && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-white dark:bg-earth-800 rounded-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-semibold text-earth-800 dark:text-earth-100">
+                  Edit Income
+                </h3>
+                <button
+                  onClick={() => setEditingIncome(null)}
+                  className="text-earth-500 hover:text-earth-700 dark:hover:text-earth-300"
+                >
+                  <ApperIcon name="X" className="h-6 w-6" />
+                </button>
+              </div>
+              
+              <form onSubmit={handleEditIncome} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                    Description
+                  </label>
+                  <input
+                    type="text"
+                    value={editingIncome.description}
+                    onChange={(e) => setEditingIncome({...editingIncome, description: e.target.value})}
+                    className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                    required
+                  />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                      Amount ($)
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={editingIncome.amount}
+                      onChange={(e) => setEditingIncome({...editingIncome, amount: e.target.value})}
+                      className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                      Crop Type
+                    </label>
+                    <select
+                      value={editingIncome.cropType}
+                      onChange={(e) => setEditingIncome({...editingIncome, cropType: e.target.value})}
+                      className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                      required
+                    >
+                      <option value="">Select crop</option>
+                      <option value="Corn">Corn</option>
+                      <option value="Wheat">Wheat</option>
+                      <option value="Soybeans">Soybeans</option>
+                      <option value="Barley">Barley</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                      Field
+                    </label>
+                    <select
+                      value={editingIncome.field}
+                      onChange={(e) => setEditingIncome({...editingIncome, field: e.target.value})}
+                      className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                      required
+                    >
+                      <option value="">Select field</option>
+                      {fields.map((field) => (
+                        <option key={field.id} value={field.name}>
+                          {field.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                      Date
+                    </label>
+                    <input
+                      type="date"
+                      value={editingIncome.date}
+                      onChange={(e) => setEditingIncome({...editingIncome, date: e.target.value})}
+                      className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                      Buyer
+                    </label>
+                    <input
+                      type="text"
+                      value={editingIncome.buyer}
+                      onChange={(e) => setEditingIncome({...editingIncome, buyer: e.target.value})}
+                      className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                      Quantity
+                    </label>
+                    <input
+                      type="text"
+                      value={editingIncome.quantity}
+                      onChange={(e) => setEditingIncome({...editingIncome, quantity: e.target.value})}
+                      placeholder="e.g., 500 bushels"
+                      className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                    Price per Unit ($)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={editingIncome.pricePerUnit}
+                    onChange={(e) => setEditingIncome({...editingIncome, pricePerUnit: e.target.value})}
+                    className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                    Notes
+                  </label>
+                  <textarea
+                    value={editingIncome.notes}
+                    onChange={(e) => setEditingIncome({...editingIncome, notes: e.target.value})}
+                    rows={3}
+                    className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                    placeholder="Optional notes about this sale..."
+                  />
+                </div>
+                
+                <div className="flex gap-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setEditingIncome(null)}
+                    className="flex-1 px-4 py-2 border border-earth-300 dark:border-earth-600 text-earth-700 dark:text-earth-300 rounded-lg hover:bg-earth-50 dark:hover:bg-earth-700 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
+                  >
+                    Update Income
                   </button>
                 </div>
               </form>

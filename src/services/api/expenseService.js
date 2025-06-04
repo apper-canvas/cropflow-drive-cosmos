@@ -128,6 +128,9 @@ let budgets = [
   }
 ]
 
+// Mock data for income
+let income = []
+
 const expenseService = {
   // Expense operations
   async getExpenses() {
@@ -249,9 +252,111 @@ const expenseService = {
       if (!categoryTotals[expense.category]) {
         categoryTotals[expense.category] = 0
       }
-      categoryTotals[expense.category] += expense.amount
+categoryTotals[expense.category] += expense.amount
     })
-return categoryTotals
+    return categoryTotals
+  },
+
+  // Income operations
+  async getIncome() {
+    await delay(300)
+    return [...income]
+  },
+
+  async getIncomeById(id) {
+    await delay(200)
+    const incomeItem = income.find(item => item.id === id)
+    if (!incomeItem) throw new Error('Income record not found')
+    return { ...incomeItem }
+  },
+
+  async createIncome(incomeData) {
+    await delay(400)
+    const newIncome = {
+      ...incomeData,
+      id: Date.now().toString()
+    }
+    income = [newIncome, ...income]
+    return { ...newIncome }
+  },
+
+  async updateIncome(id, updates) {
+    await delay(350)
+    const index = income.findIndex(item => item.id === id)
+    if (index === -1) throw new Error('Income record not found')
+    
+    income[index] = { ...income[index], ...updates }
+    return { ...income[index] }
+  },
+
+  async deleteIncome(id) {
+    await delay(250)
+    const index = income.findIndex(item => item.id === id)
+    if (index === -1) throw new Error('Income record not found')
+    
+    income = income.filter(item => item.id !== id)
+    return true
+  },
+
+  // Income analytics
+  async getIncomeByField(fieldId) {
+    await delay(200)
+    return income.filter(item => item.fieldId === fieldId)
+  },
+
+  async getIncomeByCrop(cropType) {
+    await delay(200)
+    return income.filter(item => item.cropType === cropType)
+  },
+
+  async getTotalIncomeByCrop() {
+    await delay(200)
+    const cropTotals = {}
+    income.forEach(item => {
+      if (!cropTotals[item.cropType]) {
+        cropTotals[item.cropType] = 0
+      }
+      cropTotals[item.cropType] += item.amount
+    })
+    return cropTotals
+  },
+
+  async getTotalExpensesByCrop() {
+    await delay(200)
+    const cropTotals = {}
+    expenses.forEach(expense => {
+      if (expense.cropType && expense.cropType.trim() !== '') {
+        if (!cropTotals[expense.cropType]) {
+          cropTotals[expense.cropType] = 0
+        }
+        cropTotals[expense.cropType] += expense.amount
+      }
+    })
+    return cropTotals
+  },
+
+async getProfitabilityByCrop() {
+    await delay(300)
+    const incomeByCrop = await this.getTotalIncomeByCrop()
+    const expensesByCrop = await this.getTotalExpensesByCrop()
+    
+    const allCrops = new Set([...Object.keys(incomeByCrop), ...Object.keys(expensesByCrop)])
+    const profitability = {}
+allCrops.forEach(crop => {
+      const totalIncome = incomeByCrop[crop] || 0
+      const totalExpenses = expensesByCrop[crop] || 0
+      const profit = totalIncome - totalExpenses
+      const margin = totalIncome > 0 ? (profit / totalIncome) * 100 : 0
+      profitability[crop] = {
+        income: totalIncome,
+        expenses: totalExpenses,
+        profit: profit,
+        margin: margin,
+        profitable: profit > 0
+      }
+    })
+    
+    return profitability
   },
 
   // API compatibility methods
