@@ -508,9 +508,9 @@ expense.field.toLowerCase().includes(searchTerm.toLowerCase())
           <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-earth-600 dark:text-earth-400 text-sm mb-1">This Month</p>
+<p className="text-earth-600 dark:text-earth-400 text-sm mb-1">This Month</p>
                 <p className="text-2xl font-bold text-earth-800 dark:text-earth-100">
-${monthlyExpenses.toFixed(2)}
+                  ${monthlyExpenses.toFixed(2)}
                 </p>
               </div>
               <ApperIcon name="Calendar" className="h-8 w-8 text-blue-600" />
@@ -823,9 +823,9 @@ value={filterBy}
               ))
             ) : (
               <div className="flex items-center justify-center h-64 text-earth-500 dark:text-earth-400">
-                <div className="text-center">
+<div className="text-center">
                   <ApperIcon name="TrendingUp" className="h-12 w-12 mx-auto mb-2" />
-<p>No income records found</p>
+                  <p>No income records found</p>
                 </div>
               </div>
             )}
@@ -836,9 +836,9 @@ value={filterBy}
             {/* Profitability by Crop Table */}
             <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
               <h3 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-6">
-                Profitability Analysis by Crop
+Profitability Analysis by Crop
               </h3>
-{Object.keys(currentProfitabilityData).length > 0 ? (
+              {Object.keys(currentProfitabilityData).length > 0 ? (
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
@@ -873,9 +873,9 @@ value={filterBy}
                             {data.margin?.toFixed(1) || '0.0'}%
                           </td>
                           <td className="py-4 px-4 text-center">
-                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+<span className={`px-3 py-1 rounded-full text-xs font-medium ${
                               data.profit >= 0 
-? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                                ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
                                 : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
                             }`}>
                               {data.profit >= 0 ? 'Profitable' : 'Loss'}
@@ -886,12 +886,11 @@ value={filterBy}
                     </tbody>
                   </table>
                 </div>
-              ) : (
+) : (
                 <div className="text-center py-8">
                   <ApperIcon name="BarChart3" className="h-12 w-12 text-earth-400 mx-auto mb-4" />
                   <p className="text-earth-600 dark:text-earth-400">No profitability data available</p>
                   <p className="text-sm text-earth-500 dark:text-earth-500 mt-2">
-<p className="text-sm text-earth-500 dark:text-earth-500 mt-2">
                     Add income and expense records to see profitability analysis
                   </p>
                 </div>
@@ -1010,15 +1009,17 @@ value={filterBy}
                       step="0.01"
                       value={newExpense.amount}
                       onChange={(e) => setNewExpense({...newExpense, amount: e.target.value})}
-                      className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
                       required
-/>
+                    />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
                       Category
+Category
                     </label>
                     <select
+                      value={newExpense.category}
                       onChange={(e) => setNewExpense({...newExpense, category: e.target.value})}
                       className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
                       required
@@ -1144,15 +1145,17 @@ value={filterBy}
                       step="0.01"
                       value={editingExpense.amount}
                       onChange={(e) => setEditingExpense({...editingExpense, amount: e.target.value})}
-                      className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
                       required
-/>
+                    />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
                       Category
+Category
                     </label>
                     <select
+                      value={editingExpense.category}
                       onChange={(e) => setEditingExpense({...editingExpense, category: e.target.value})}
                       className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
                       required
@@ -1207,13 +1210,12 @@ value={filterBy}
                   </label>
                   <textarea
                     value={editingExpense.notes}
-                    onChange={(e) => setEditingExpense({...editingExpense, notes: e.target.value})}
+onChange={(e) => setEditingExpense({...editingExpense, notes: e.target.value})}
                     rows={3}
-className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                    className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
                     placeholder="Optional notes about this expense..."
                   />
                 </div>
-                
                 <div className="flex gap-3 pt-4">
                   <button
                     type="button"
