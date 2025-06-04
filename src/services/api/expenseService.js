@@ -251,7 +251,24 @@ const expenseService = {
       }
       categoryTotals[expense.category] += expense.amount
     })
-    return categoryTotals
+return categoryTotals
+  },
+
+  // API compatibility methods
+  async getAll() {
+    return this.getExpenses()
+  },
+
+  async create(expenseData) {
+    return this.createExpense(expenseData)
+  },
+
+  async update(id, updates) {
+    return this.updateExpense(id, updates)
+  },
+
+  async delete(id) {
+    return this.deleteExpense(id)
   }
 }
 
