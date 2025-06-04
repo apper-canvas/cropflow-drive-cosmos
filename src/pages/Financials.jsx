@@ -111,13 +111,12 @@ const [activeTab, setActiveTab] = useState('expenses')
       try {
         await expenseService.delete(expenseId)
         setExpenses(prev => prev.filter(e => e.id !== expenseId))
-        toast.success('Expense deleted successfully!')
+toast.success('Expense deleted successfully!')
       } catch (err) {
-toast.error('Failed to delete expense')
+        toast.error('Failed to delete expense')
       }
     }
   }
-
   const handleDeleteIncome = async (incomeId) => {
     if (window.confirm('Are you sure you want to delete this income?')) {
       try {
@@ -417,9 +416,9 @@ toast.error('Failed to delete expense')
         {/* Header */}
         <motion.div variants={itemVariants} className="mb-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div>
+<div>
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-earth-800 dark:text-earth-100 mb-2">
-Financial Tracking
+                Financial Tracking
               </h1>
               <p className="text-earth-600 dark:text-earth-300 text-sm sm:text-base">
                 Analyze costs per field and crop to optimize your farm's profitability
@@ -438,9 +437,9 @@ Financial Tracking
               
               {activeTab === 'income' && (
                 <button
-                  onClick={() => setShowAddIncomeModal(true)}
+onClick={() => setShowAddIncomeModal(true)}
                   className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-earth hover:shadow-earth-hover"
->
+                >
                   <ApperIcon name="Plus" className="h-5 w-5 inline mr-2" />
                   Add Income
                 </button>
@@ -518,9 +517,9 @@ Financial Tracking
             </div>
           </div>
           
-          <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
+<div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
             <div className="flex items-center justify-between">
-<div>
+              <div>
                 <p className="text-earth-600 dark:text-earth-400 text-sm mb-1">Avg per Expense</p>
                 <p className="text-2xl font-bold text-earth-800 dark:text-earth-100">
                   ${expenses.length > 0 ? (totalExpenses / expenses.length).toFixed(2) : '0.00'}
@@ -640,9 +639,9 @@ Financial Tracking
                   <option value="all">All Categories</option>
                   <option value="seeds">Seeds</option>
                   <option value="fertilizer">Fertilizer</option>
-                  <option value="equipment">Equipment</option>
+<option value="equipment">Equipment</option>
                   <option value="labor">Labor</option>
-<option value="fuel">Fuel</option>
+                  <option value="fuel">Fuel</option>
                   <option value="maintenance">Maintenance</option>
                 </select>
               </div>
@@ -834,9 +833,9 @@ Financial Tracking
           </motion.div>
         )}
 
-        {activeTab === 'profitability' && (
+{activeTab === 'profitability' && (
           <motion.div variants={itemVariants} className="space-y-8">
-{/* Profitability by Crop Table */}
+            {/* Profitability by Crop Table */}
             <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
               <h3 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-6">
                 Profitability Analysis by Crop
@@ -848,9 +847,9 @@ Financial Tracking
                     <thead>
                       <tr className="border-b border-earth-200 dark:border-earth-700">
                         <th className="text-left py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Crop</th>
-                        <th className="text-right py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Income</th>
+<th className="text-right py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Income</th>
                         <th className="text-right py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Expenses</th>
-<th className="text-right py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Profit/Loss</th>
+                        <th className="text-right py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Profit/Loss</th>
                         <th className="text-right py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Margin</th>
                         <th className="text-center py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Status</th>
                       </tr>
@@ -886,9 +885,9 @@ Financial Tracking
                             </span>
                           </td>
                         </tr>
-                      ))}
+))}
                     </tbody>
-</table>
+                  </table>
                 </div>
               ) : (
                 <div className="text-center py-8">
@@ -925,7 +924,7 @@ Financial Tracking
                     }}
                     series={[{
                       name: 'Profit/Loss',
-                      data: Object.values(currentProfitabilityData).map(data => data.profit || 0)
+data: Object.values(currentProfitabilityData).map(data => data.profit || 0)
                     }]}
                     type="bar"
                     height={300}
@@ -933,7 +932,7 @@ Financial Tracking
                 </div>
 
                 {/* Revenue vs Expenses Chart */}
-                <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
+<div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
                   <h4 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">
                     Revenue vs Expenses
                   </h4>
@@ -960,9 +959,9 @@ Financial Tracking
                       },
                       {
                         name: 'Expenses',
-                        data: Object.values(currentProfitabilityData).map(data => data.expenses || 0)
+data: Object.values(currentProfitabilityData).map(data => data.expenses || 0)
                       }
-]}
+                    ]}
                     type="bar"
                     height={300}
                   />
@@ -1027,9 +1026,9 @@ Financial Tracking
                     <select
                       value={newExpense.category}
                       onChange={(e) => setNewExpense({...newExpense, category: e.target.value})}
-                      className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
                       required
->
+                    >
                       <option value="">Select category</option>
                       <option value="seeds">Seeds</option>
                       <option value="fertilizer">Fertilizer</option>
@@ -1162,9 +1161,9 @@ Financial Tracking
                     <select
                       value={editingExpense.category}
                       onChange={(e) => setEditingExpense({...editingExpense, category: e.target.value})}
-                      className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
                       required
->
+                    >
                       <option value="">Select category</option>
                       <option value="seeds">Seeds</option>
                       <option value="fertilizer">Fertilizer</option>
@@ -1226,9 +1225,9 @@ Financial Tracking
                   <button
                     type="button"
                     onClick={() => setEditingExpense(null)}
-                    className="flex-1 px-4 py-2 border border-earth-300 dark:border-earth-600 text-earth-700 dark:text-earth-300 rounded-lg hover:bg-earth-50 dark:hover:bg-earth-700 transition-colors"
+className="flex-1 px-4 py-2 border border-earth-300 dark:border-earth-600 text-earth-700 dark:text-earth-300 rounded-lg hover:bg-earth-50 dark:hover:bg-earth-700 transition-colors"
                   >
-Cancel
+                    Cancel
                   </button>
                   <button
                     type="submit"
