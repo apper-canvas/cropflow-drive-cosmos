@@ -1,13 +1,18 @@
 import React, { useState } from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Link, useLocation } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Home from './pages/Home'
+import Fields from './pages/Fields'
+import Resources from './pages/Resources'
+import Tasks from './pages/Tasks'
+import Financials from './pages/Financials'
 import NotFound from './pages/NotFound'
 import ApperIcon from './components/ApperIcon'
 
 function App() {
   const [darkMode, setDarkMode] = useState(false)
+  const location = useLocation()
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode)
@@ -31,11 +36,56 @@ function App() {
 
 {/* Navigation Items */}
               <div className="hidden md:flex items-center space-x-6">
-                <a href="#" className="text-earth-700 dark:text-earth-300 hover:text-primary transition-colors">Dashboard</a>
-                <a href="#" className="text-earth-700 dark:text-earth-300 hover:text-primary transition-colors">Fields</a>
-                <a href="#" className="text-earth-700 dark:text-earth-300 hover:text-primary transition-colors">Resources</a>
-                <a href="#" className="text-earth-700 dark:text-earth-300 hover:text-primary transition-colors">Tasks</a>
-                <a href="#" className="text-earth-700 dark:text-earth-300 hover:text-primary transition-colors">Financials</a>
+                <Link 
+                  to="/" 
+                  className={`transition-colors ${
+                    location.pathname === '/' 
+                      ? 'text-primary font-medium' 
+                      : 'text-earth-700 dark:text-earth-300 hover:text-primary'
+                  }`}
+                >
+                  Dashboard
+                </Link>
+                <Link 
+                  to="/fields" 
+                  className={`transition-colors ${
+                    location.pathname === '/fields' 
+                      ? 'text-primary font-medium' 
+                      : 'text-earth-700 dark:text-earth-300 hover:text-primary'
+                  }`}
+                >
+                  Fields
+                </Link>
+                <Link 
+                  to="/resources" 
+                  className={`transition-colors ${
+                    location.pathname === '/resources' 
+                      ? 'text-primary font-medium' 
+                      : 'text-earth-700 dark:text-earth-300 hover:text-primary'
+                  }`}
+                >
+                  Resources
+                </Link>
+                <Link 
+                  to="/tasks" 
+                  className={`transition-colors ${
+                    location.pathname === '/tasks' 
+                      ? 'text-primary font-medium' 
+                      : 'text-earth-700 dark:text-earth-300 hover:text-primary'
+                  }`}
+                >
+                  Tasks
+                </Link>
+                <Link 
+                  to="/financials" 
+                  className={`transition-colors ${
+                    location.pathname === '/financials' 
+                      ? 'text-primary font-medium' 
+                      : 'text-earth-700 dark:text-earth-300 hover:text-primary'
+                  }`}
+                >
+                  Financials
+                </Link>
               </div>
 
               {/* Actions */}
@@ -54,9 +104,13 @@ function App() {
           </div>
         </nav>
 
-        {/* Main Content */}
+{/* Main Content */}
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/fields" element={<Fields />} />
+          <Route path="/resources" element={<Resources />} />
+          <Route path="/tasks" element={<Tasks />} />
+          <Route path="/financials" element={<Financials />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
 
