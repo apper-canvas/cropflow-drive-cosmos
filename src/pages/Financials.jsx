@@ -961,14 +961,14 @@ Profitability Analysis by Crop
                           data: Object.values(currentProfitabilityData).map(data => data.expenses || 0)
                         }
 ]}
-                      type="bar"
+type="bar"
                       height={300}
-/>
-                  </div>
+                    />
+</div>
                 </motion.div>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
         )}
         {/* Add Expense Modal */}
         {showAddModal && (
