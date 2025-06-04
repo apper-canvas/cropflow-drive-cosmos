@@ -132,7 +132,7 @@ let budgets = [
 let income = []
 
 const expenseService = {
-// Expense operations
+  // Expense operations
   async getExpenses() {
     await delay(300)
     return [...expenses]
@@ -216,20 +216,10 @@ const expenseService = {
     return cropData
   },
 
-  // Budget operations
+// Budget operations
   getBudgets: async () => {
     await delay(300)
     return budgets
-  },
-
-  createBudget: async (budgetData) => {
-    await delay(500)
-const newBudget = {
-      ...budgetData,
-      id: Date.now().toString()
-    }
-    budgets = [newBudget, ...budgets]
-    return { ...newBudget }
   },
 
   async createExpense(expenseData) {
@@ -260,13 +250,7 @@ const newBudget = {
     return true
   },
 
-  // Budget operations
-  async getBudgets() {
-    await delay(300)
-    return [...budgets]
-  },
-
-  async getBudgetById(id) {
+async getBudgetById(id) {
     await delay(200)
     const budget = budgets.find(item => item.id === id)
     if (!budget) throw new Error('Budget not found')
@@ -336,7 +320,6 @@ const newBudget = {
     await delay(200)
     const categoryTotals = {}
     expenses.forEach(expense => {
-      if (!categoryTotals[expense.category]) {
 if (!categoryTotals[expense.category]) {
         categoryTotals[expense.category] = 0
       }
@@ -344,71 +327,7 @@ if (!categoryTotals[expense.category]) {
     })
     return categoryTotals
   },
-  // Income operations
-  async getIncome() {
-    await delay(300)
-    return [...income]
-  },
-
-  async getIncomeById(id) {
-    await delay(200)
-    const incomeItem = income.find(item => item.id === id)
-    if (!incomeItem) throw new Error('Income record not found')
-    return { ...incomeItem }
-  },
-
-  async createIncome(incomeData) {
-    await delay(400)
-    const newIncome = {
-      ...incomeData,
-      id: Date.now().toString()
-    }
-    income = [newIncome, ...income]
-    return { ...newIncome }
-  },
-
-  async updateIncome(id, updates) {
-    await delay(350)
-    const index = income.findIndex(item => item.id === id)
-    if (index === -1) throw new Error('Income record not found')
-    
-    income[index] = { ...income[index], ...updates }
-    return { ...income[index] }
-  },
-
-  async deleteIncome(id) {
-    await delay(250)
-    const index = income.findIndex(item => item.id === id)
-    if (index === -1) throw new Error('Income record not found')
-    
-    income = income.filter(item => item.id !== id)
-    return true
-  },
-
-  // Income analytics
-  async getIncomeByField(fieldId) {
-    await delay(200)
-    return income.filter(item => item.fieldId === fieldId)
-  },
-
-  async getIncomeByCrop(cropType) {
-    await delay(200)
-    return income.filter(item => item.cropType === cropType)
-  },
-
-  async getTotalIncomeByCrop() {
-    await delay(200)
-    const cropTotals = {}
-    income.forEach(item => {
-      if (!cropTotals[item.cropType]) {
-        cropTotals[item.cropType] = 0
-      }
-      cropTotals[item.cropType] += item.amount
-    })
-    return cropTotals
-  },
-
-  async getTotalExpensesByCrop() {
+async getTotalExpensesByCrop() {
     await delay(200)
     const cropTotals = {}
     expenses.forEach(expense => {
@@ -420,7 +339,7 @@ if (!categoryTotals[expense.category]) {
       }
     })
     return cropTotals
-},
+  },
 
   async getProfitabilityByCrop() {
     await delay(300)
