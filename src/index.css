@@ -173,26 +173,52 @@
 
 /* Chart container styling */
 .chart-container {
-  min-height: 300px;
+  min-height: 350px;
+  height: 350px;
   width: 100%;
   position: relative;
   background: transparent;
+  display: flex;
+  flex-direction: column;
 }
 
 .chart-wrapper {
   background: transparent;
   border-radius: 12px;
   padding: 16px;
-  min-height: 300px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  min-height: 350px;
+  height: 350px;
+  width: 100%;
+  display: block;
+  overflow: hidden;
+}
+
+/* Ensure ApexCharts containers have proper dimensions */
+.chart-wrapper .apexcharts-canvas {
+  min-height: 300px !important;
+  height: 300px !important;
+  width: 100% !important;
+}
+
+.chart-wrapper .apexcharts-inner {
+  min-height: 300px !important;
+  height: 300px !important;
+  width: 100% !important;
+}
+
+/* Fix for chart div containers */
+.chart-wrapper > div {
+  height: 100% !important;
+  width: 100% !important;
+  min-height: 300px !important;
 }
 
 /* Responsive chart styling */
 @media (max-width: 768px) {
   .apexcharts-canvas {
     max-width: 100% !important;
+    min-height: 250px !important;
+    height: 250px !important;
   }
   
   .apexcharts-legend {
@@ -205,17 +231,46 @@
   }
   
   .chart-container {
-    min-height: 250px;
+    min-height: 280px;
+    height: 280px;
+  }
+  
+  .chart-wrapper {
+    min-height: 280px;
+    height: 280px;
+  }
+  
+  .chart-wrapper .apexcharts-canvas {
+    min-height: 250px !important;
+    height: 250px !important;
+  }
+  
+  .chart-wrapper .apexcharts-inner {
+    min-height: 250px !important;
+    height: 250px !important;
   }
 }
 
 @media (max-width: 480px) {
   .chart-container {
-    min-height: 200px;
+    min-height: 250px;
+    height: 250px;
   }
   
   .chart-wrapper {
     padding: 8px;
+    min-height: 250px;
+    height: 250px;
+  }
+  
+  .chart-wrapper .apexcharts-canvas {
+    min-height: 220px !important;
+    height: 220px !important;
+  }
+  
+  .chart-wrapper .apexcharts-inner {
+    min-height: 220px !important;
+    height: 220px !important;
   }
 }
 
