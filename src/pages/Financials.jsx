@@ -62,10 +62,10 @@ useEffect(() => {
 
   const loadFields = async () => {
     try {
-      const { fieldService } = await import('../services')
+const { fieldService } = await import('../services')
       const result = await fieldService.getAll()
       setFields(result || [])
-} catch (err) {
+    } catch (err) {
       console.error('Failed to load fields:', err)
       toast.error('Failed to load fields')
     }
@@ -104,10 +104,10 @@ useEffect(() => {
     } catch (err) {
       toast.error('Failed to update expense')
     }
-  }
+}
 
   const handleDeleteExpense = async (expenseId) => {
-if (window.confirm('Are you sure you want to delete this expense?')) {
+    if (window.confirm('Are you sure you want to delete this expense?')) {
       try {
         await expenseService.delete(expenseId)
         setExpenses(prev => prev.filter(e => e.id !== expenseId))
@@ -169,10 +169,10 @@ if (window.confirm('Are you sure you want to delete this expense?')) {
     .filter(expense => 
       expense.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       expense.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      expense.field.toLowerCase().includes(searchTerm.toLowerCase())
+expense.field.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .sort((a, b) => {
-if (sortBy === 'date') return new Date(b.date) - new Date(a.date)
+      if (sortBy === 'date') return new Date(b.date) - new Date(a.date)
       if (sortBy === 'amount') return parseFloat(b.amount) - parseFloat(a.amount)
       if (sortBy === 'category') return a.category.localeCompare(b.category)
       return 0
@@ -430,10 +430,10 @@ if (sortBy === 'date') return new Date(b.date) - new Date(a.date)
                   onClick={() => setShowAddModal(true)}
                   className="bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-xl font-medium transition-all shadow-earth hover:shadow-earth-hover"
                 >
-                  <ApperIcon name="Plus" className="h-5 w-5 inline mr-2" />
+<ApperIcon name="Plus" className="h-5 w-5 inline mr-2" />
                   Add Expense
                 </button>
-)}
+              )}
               
               {activeTab === 'income' && (
                 <button
@@ -510,13 +510,12 @@ if (sortBy === 'date') return new Date(b.date) - new Date(a.date)
               <div>
                 <p className="text-earth-600 dark:text-earth-400 text-sm mb-1">This Month</p>
                 <p className="text-2xl font-bold text-earth-800 dark:text-earth-100">
-                  ${monthlyExpenses.toFixed(2)}
+${monthlyExpenses.toFixed(2)}
                 </p>
               </div>
-<ApperIcon name="Calendar" className="h-8 w-8 text-blue-600" />
+              <ApperIcon name="Calendar" className="h-8 w-8 text-blue-600" />
             </div>
           </div>
-          
           <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
             <div className="flex items-center justify-between">
               <div>
@@ -632,10 +631,10 @@ if (sortBy === 'date') return new Date(b.date) - new Date(a.date)
                   Filter by Category
                 </label>
                 <select
-                  value={filterBy}
+value={filterBy}
                   onChange={(e) => setFilterBy(e.target.value)}
                   className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
->
+                >
                   <option value="all">All Categories</option>
                   <option value="seeds">Seeds</option>
                   <option value="fertilizer">Fertilizer</option>
@@ -826,13 +825,12 @@ if (sortBy === 'date') return new Date(b.date) - new Date(a.date)
               <div className="flex items-center justify-center h-64 text-earth-500 dark:text-earth-400">
                 <div className="text-center">
                   <ApperIcon name="TrendingUp" className="h-12 w-12 mx-auto mb-2" />
-                  <p>No income records found</p>
+<p>No income records found</p>
                 </div>
               </div>
-)}
+            )}
           </motion.div>
         )}
-
         {activeTab === 'profitability' && (
           <motion.div variants={itemVariants} className="space-y-8">
             {/* Profitability by Crop Table */}
@@ -840,10 +838,9 @@ if (sortBy === 'date') return new Date(b.date) - new Date(a.date)
               <h3 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-6">
                 Profitability Analysis by Crop
               </h3>
-              
-              {Object.keys(currentProfitabilityData).length > 0 ? (
+{Object.keys(currentProfitabilityData).length > 0 ? (
                 <div className="overflow-x-auto">
-<table className="w-full">
+                  <table className="w-full">
                     <thead>
                       <tr className="border-b border-earth-200 dark:border-earth-700">
                         <th className="text-left py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Crop</th>
@@ -878,10 +875,10 @@ if (sortBy === 'date') return new Date(b.date) - new Date(a.date)
                           <td className="py-4 px-4 text-center">
                             <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                               data.profit >= 0 
-                                ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
                                 : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
                             }`}>
-{data.profit >= 0 ? 'Profitable' : 'Loss'}
+                              {data.profit >= 0 ? 'Profitable' : 'Loss'}
                             </span>
                           </td>
                         </tr>
@@ -894,13 +891,12 @@ if (sortBy === 'date') return new Date(b.date) - new Date(a.date)
                   <ApperIcon name="BarChart3" className="h-12 w-12 text-earth-400 mx-auto mb-4" />
                   <p className="text-earth-600 dark:text-earth-400">No profitability data available</p>
                   <p className="text-sm text-earth-500 dark:text-earth-500 mt-2">
+<p className="text-sm text-earth-500 dark:text-earth-500 mt-2">
                     Add income and expense records to see profitability analysis
                   </p>
                 </div>
               )}
             </div>
-
-{/* Profitability Charts */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Profit by Crop Chart */}
               <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
@@ -965,7 +961,6 @@ if (sortBy === 'date') return new Date(b.date) - new Date(a.date)
                     type="bar"
                     height={300}
                   />
-/>
                 </div>
               </div>
             </div>
@@ -1017,10 +1012,9 @@ if (sortBy === 'date') return new Date(b.date) - new Date(a.date)
                       onChange={(e) => setNewExpense({...newExpense, amount: e.target.value})}
                       className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
                       required
-                    />
+/>
                   </div>
                   <div>
-<div>
                     <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
                       Category
                     </label>
@@ -1152,10 +1146,9 @@ if (sortBy === 'date') return new Date(b.date) - new Date(a.date)
                       onChange={(e) => setEditingExpense({...editingExpense, amount: e.target.value})}
                       className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
                       required
-                    />
+/>
                   </div>
                   <div>
-<div>
                     <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
                       Category
                     </label>
@@ -1216,10 +1209,10 @@ if (sortBy === 'date') return new Date(b.date) - new Date(a.date)
                     value={editingExpense.notes}
                     onChange={(e) => setEditingExpense({...editingExpense, notes: e.target.value})}
                     rows={3}
-                    className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
                     placeholder="Optional notes about this expense..."
                   />
-</div>
+                </div>
                 
                 <div className="flex gap-3 pt-4">
                   <button
