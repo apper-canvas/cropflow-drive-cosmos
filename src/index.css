@@ -85,9 +85,163 @@
 }
 
 /* Responsive touch targets */
+/* Responsive touch targets */
 @media (max-width: 768px) {
   button, a {
     min-height: 44px;
     min-width: 44px;
   }
+}
+
+/* ApexCharts styling for Financial Tracking */
+.apexcharts-canvas {
+  background: transparent !important;
+}
+
+.apexcharts-svg {
+  background: transparent !important;
+}
+
+.apexcharts-inner {
+  background: transparent !important;
+}
+
+.apexcharts-legend {
+  background: transparent !important;
+  color: inherit !important;
+}
+
+.apexcharts-legend-text {
+  color: inherit !important;
+  font-family: 'IBM Plex Sans', sans-serif !important;
+  font-size: 12px !important;
+}
+
+.apexcharts-tooltip {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(139, 69, 19, 0.2) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+  font-family: 'IBM Plex Sans', sans-serif !important;
+}
+
+.dark .apexcharts-tooltip {
+  background: rgba(30, 41, 59, 0.95) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #f1f5f9 !important;
+}
+
+.apexcharts-tooltip-title {
+  background: transparent !important;
+  border: none !important;
+  font-weight: 600 !important;
+  color: #1e293b !important;
+  font-family: 'IBM Plex Sans', sans-serif !important;
+}
+
+.dark .apexcharts-tooltip-title {
+  color: #f1f5f9 !important;
+}
+
+.apexcharts-datalabels-group text {
+  fill: #1e293b !important;
+  font-family: 'IBM Plex Sans', sans-serif !important;
+  font-weight: 500 !important;
+}
+
+.dark .apexcharts-datalabels-group text {
+  fill: #f1f5f9 !important;
+}
+
+.apexcharts-xaxis-label {
+  fill: #64748b !important;
+  font-family: 'IBM Plex Sans', sans-serif !important;
+}
+
+.dark .apexcharts-xaxis-label {
+  fill: #94a3b8 !important;
+}
+
+.apexcharts-yaxis-label {
+  fill: #64748b !important;
+  font-family: 'IBM Plex Sans', sans-serif !important;
+}
+
+.dark .apexcharts-yaxis-label {
+  fill: #94a3b8 !important;
+}
+
+/* Chart container styling */
+.chart-container {
+  min-height: 300px;
+  width: 100%;
+  position: relative;
+  background: transparent;
+}
+
+.chart-wrapper {
+  background: transparent;
+  border-radius: 12px;
+  padding: 16px;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive chart styling */
+@media (max-width: 768px) {
+  .apexcharts-canvas {
+    max-width: 100% !important;
+  }
+  
+  .apexcharts-legend {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+  
+  .apexcharts-legend-text {
+    font-size: 10px !important;
+  }
+  
+  .chart-container {
+    min-height: 250px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chart-container {
+    min-height: 200px;
+  }
+  
+  .chart-wrapper {
+    padding: 8px;
+  }
+}
+
+/* Fix for chart rendering issues */
+.apexcharts-graphical {
+  fill: transparent !important;
+}
+
+.apexcharts-pie-label {
+  fill: #1e293b !important;
+  font-family: 'IBM Plex Sans', sans-serif !important;
+  font-weight: 500 !important;
+}
+
+.dark .apexcharts-pie-label {
+  fill: #f1f5f9 !important;
+}
+
+/* Ensure proper chart dimensions */
+.apexcharts-canvas svg {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Chart animation improvements */
+.apexcharts-series {
+  animation-duration: 0.8s !important;
+  animation-timing-function: ease-out !important;
 }
