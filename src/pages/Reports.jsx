@@ -622,61 +622,72 @@ const handleExport = async (format) => {
           ))}
         </motion.div>
 
-        {/* Charts */}
 {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           {/* Yield Chart */}
           <motion.div variants={itemVariants}>
-            <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth chart-container">
-              <div className="chart-wrapper">
-                <ReactApexCharts 
-                  options={yieldChart.options} 
-                  series={yieldChart.series} 
-                  type="area" 
-                  height={300}
-                />
+            <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth report-chart-container">
+              <div className="chart-container">
+                <div className="chart-wrapper">
+                  <ReactApexCharts 
+                    options={yieldChart.options} 
+                    series={yieldChart.series} 
+                    type="area" 
+                    height={300}
+                    width="100%"
+                  />
+                </div>
               </div>
             </div>
-</motion.div>
+          </motion.div>
 
           {/* Expense Chart */}
           <motion.div variants={itemVariants}>
-            <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth chart-container">
-              <div className="chart-wrapper">
-                <ReactApexCharts 
-                  options={expenseChart.options} 
-                  series={expenseChart.series} 
-                  type="donut" 
-                  height={300}
-                />
+            <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth report-chart-container">
+              <div className="chart-container">
+                <div className="chart-wrapper">
+                  <ReactApexCharts 
+                    options={expenseChart.options} 
+                    series={expenseChart.series} 
+                    type="donut" 
+                    height={300}
+                    width="100%"
+                  />
+                </div>
               </div>
             </div>
-</motion.div>
+          </motion.div>
 
           {/* Task Chart */}
           <motion.div variants={itemVariants}>
-            <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth chart-container">
-              <div className="chart-wrapper">
-                <ReactApexCharts 
-                  options={taskChart.options} 
-                  series={taskChart.series} 
-                  type="bar" 
-                  height={300}
-                />
+            <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth report-chart-container">
+              <div className="chart-container">
+                <div className="chart-wrapper">
+                  <ReactApexCharts 
+                    options={taskChart.options} 
+                    series={taskChart.series} 
+                    type="bar" 
+                    height={300}
+                    width="100%"
+                  />
+                </div>
               </div>
             </div>
-</motion.div>
+          </motion.div>
 
           {/* Resource Chart */}
           <motion.div variants={itemVariants}>
-            <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth chart-container">
-              <div className="chart-wrapper">
-                <ReactApexCharts 
-                  options={resourceChart.options} 
-                  series={resourceChart.series} 
-type="pie" 
-                  height={300}
-                />
+            <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth report-chart-container">
+              <div className="chart-container">
+                <div className="chart-wrapper">
+                  <ReactApexCharts 
+                    options={resourceChart.options} 
+                    series={resourceChart.series} 
+                    type="pie" 
+                    height={300}
+                    width="100%"
+                  />
+                </div>
               </div>
             </div>
           </motion.div>
