@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import MainFeature from '../components/MainFeature'
 import ApperIcon from '../components/ApperIcon'
-import { fieldService } from '../services'
-
+import { fieldService, weatherService } from '../services'
 const Home = () => {
   const [currentDateTime, setCurrentDateTime] = useState(new Date())
   const [weatherData, setWeatherData] = useState({
@@ -26,11 +25,11 @@ const Home = () => {
     harvestReady: 2
   })
 
-  const [fields, setFields] = useState([])
+const [fields, setFields] = useState([])
   const [loading, setLoading] = useState(false)
+  const [weatherLoading, setWeatherLoading] = useState(false)
   const [error, setError] = useState(null)
-
-  useEffect(() => {
+useEffect(() => {
     const loadFields = async () => {
       setLoading(true)
       try {
@@ -44,7 +43,37 @@ const Home = () => {
       }
     }
     loadFields()
-loadFields()
+  }, [])
+
+  // Load real-time weather data
+  useEffect(() => {
+    const loadWeatherData = async () => {
+      setWeatherLoading(true)
+      try {
+        const result = await weatherService.getWeatherData()
+        setWeatherData(result)
+      } catch (err) {
+        console.error('Failed to load weather data:', err.message)
+        // Keep existing mock data as fallback
+      } finally {
+        setWeatherLoading(false)
+      }
+    }
+    loadWeatherData()
+  }, [])
+
+  // Auto-refresh weather data every 30 minutes
+  useEffect(() => {
+    const weatherInterval = setInterval(async () => {
+      try {
+        const result = await weatherService.getWeatherData()
+        setWeatherData(result)
+      } catch (err) {
+        console.error('Failed to refresh weather data:', err.message)
+      }
+    }, 1800000) // 30 minutes
+
+    return () => clearInterval(weatherInterval)
   }, [])
 
   // Update current date and time every second
@@ -116,39 +145,56 @@ loadFields()
                     second: '2-digit' 
                   })}
                 </p>
-              </div>
+</div>
 
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-3">
-                  <ApperIcon name="Cloud" className="h-8 w-8 text-primary" />
-                  <div>
-                    <p className="font-semibold text-earth-800 dark:text-earth-100 text-lg">
-                      {weatherData.temperature}°C
-                    </p>
-                    <p className="text-sm text-earth-600 dark:text-earth-300">
-                      {weatherData.condition}
-                    </p>
+              {weatherLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="flex items-center gap-3">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                    <p className="text-earth-600 dark:text-earth-300 text-sm">Loading weather...</p>
                   </div>
                 </div>
-                <div className="text-right text-sm text-earth-600 dark:text-earth-300">
-                  <p>💧 {weatherData.humidity}%</p>
-                  <p>🌪️ {weatherData.windSpeed} km/h</p>
-                </div>
-              </div>
-              
-              {/* 5-day forecast */}
-              <div className="grid grid-cols-5 gap-2 mt-4">
-                {weatherData.forecast.map((day, index) => (
-                  <div key={index} className="text-center">
-                      <p className="text-xs text-earth-600 dark:text-earth-400 mb-1">{day.day}</p>
-                      <p className="text-sm font-medium text-earth-800 dark:text-earth-200">
-                        {day.high}°
-                      </p>
-                      <p className="text-xs text-earth-500 dark:text-earth-400">{day.low}°</p>
-                      <p className="text-xs text-blue-600 dark:text-blue-400">{day.rain}%</p>
+              ) : (
+                <>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <ApperIcon name="Cloud" className="h-8 w-8 text-primary" />
+                      <div>
+                        <p className="font-semibold text-earth-800 dark:text-earth-100 text-lg">
+                          {weatherData.temperature}°C
+                        </p>
+                        <p className="text-sm text-earth-600 dark:text-earth-300">
+                          {weatherData.condition}
+                        </p>
+                        {weatherData.location && (
+                          <p className="text-xs text-earth-500 dark:text-earth-400">
+                            {weatherData.location}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="text-right text-sm text-earth-600 dark:text-earth-300">
+                      <p>💧 {weatherData.humidity}%</p>
+                      <p>🌪️ {weatherData.windSpeed} km/h</p>
+                    </div>
                   </div>
-                ))}
-              </div>
+                </>
+              )}
+{/* 5-day forecast */}
+              {!weatherLoading && (
+                <div className="grid grid-cols-5 gap-2 mt-4">
+                  {weatherData.forecast.map((day, index) => (
+                    <div key={index} className="text-center">
+                        <p className="text-xs text-earth-600 dark:text-earth-400 mb-1">{day.day}</p>
+                        <p className="text-sm font-medium text-earth-800 dark:text-earth-200">
+                          {day.high}°
+                        </p>
+                        <p className="text-xs text-earth-500 dark:text-earth-400">{day.low}°</p>
+                        <p className="text-xs text-blue-600 dark:text-blue-400">{day.rain}%</p>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </motion.div>
