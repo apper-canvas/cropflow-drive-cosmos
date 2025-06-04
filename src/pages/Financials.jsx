@@ -960,7 +960,7 @@ Profitability Analysis by Crop
                           name: 'Expenses',
                           data: Object.values(currentProfitabilityData).map(data => data.expenses || 0)
                         }
-                      ]}
+]}
                       type="bar"
                       height={300}
                     />
@@ -970,7 +970,6 @@ Profitability Analysis by Crop
             </div>
           </motion.div>
         )}
-
         {/* Add Expense Modal */}
         {showAddModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -1020,9 +1019,8 @@ className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounde
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+<label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
                       Category
-Category
                     </label>
                     <select
                       value={newExpense.category}
@@ -1156,9 +1154,8 @@ className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounde
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+<label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
                       Category
-Category
                     </label>
                     <select
                       value={editingExpense.category}
