@@ -5,6 +5,7 @@ import ApperIcon from '../components/ApperIcon'
 import { fieldService } from '../services'
 
 const Home = () => {
+  const [currentDateTime, setCurrentDateTime] = useState(new Date())
   const [weatherData, setWeatherData] = useState({
     temperature: 24,
     condition: "Partly Cloudy",
@@ -18,7 +19,6 @@ const Home = () => {
       { day: "Fri", high: 23, low: 17, rain: 60 }
     ]
   })
-
   const [quickStats, setQuickStats] = useState({
     totalFields: 0,
     activeTasks: 12,
@@ -44,8 +44,17 @@ const Home = () => {
       }
     }
     loadFields()
+loadFields()
   }, [])
 
+  // Update current date and time every second
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentDateTime(new Date())
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [])
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -88,8 +97,27 @@ const Home = () => {
               </p>
             </div>
             
-            {/* Weather Widget */}
-            <div className="glass-morphism rounded-2xl p-4 sm:p-6 min-w-0 lg:min-w-[300px]">
+{/* Weather Widget */}
+            <div className="glass-morphism rounded-2xl p-4 sm:p-6 min-w-0 lg:min-w-[320px]">
+              {/* Date and Time Display */}
+              <div className="text-center mb-4 pb-3 border-b border-earth-200 dark:border-earth-600">
+                <p className="text-lg font-semibold text-earth-800 dark:text-earth-100">
+                  {currentDateTime.toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </p>
+                <p className="text-2xl font-bold text-primary">
+                  {currentDateTime.toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit', 
+                    second: '2-digit' 
+                  })}
+                </p>
+              </div>
+
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
                   <ApperIcon name="Cloud" className="h-8 w-8 text-primary" />
@@ -106,7 +134,7 @@ const Home = () => {
                   <p>💧 {weatherData.humidity}%</p>
                   <p>🌪️ {weatherData.windSpeed} km/h</p>
                 </div>
-</div>
+              </div>
               
               {/* 5-day forecast */}
               <div className="grid grid-cols-5 gap-2 mt-4">
@@ -118,9 +146,9 @@ const Home = () => {
                       </p>
                       <p className="text-xs text-earth-500 dark:text-earth-400">{day.low}°</p>
                       <p className="text-xs text-blue-600 dark:text-blue-400">{day.rain}%</p>
-</div>
-                  ))}
-                </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </motion.div>
