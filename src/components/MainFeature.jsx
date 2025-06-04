@@ -5,7 +5,7 @@ import ApperIcon from './ApperIcon'
 import { fieldService, taskService, resourceService } from '../services'
 
 const MainFeature = () => {
-  const [activeTab, setActiveTab] = useState('fields')
+const [activeTab, setActiveTab] = useState('fields')
   const [fields, setFields] = useState([])
   const [tasks, setTasks] = useState([])
   const [resources, setResources] = useState([])
@@ -13,6 +13,15 @@ const MainFeature = () => {
   const [error, setError] = useState(null)
   const [showTaskForm, setShowTaskForm] = useState(false)
   const [selectedField, setSelectedField] = useState(null)
+  
+  // Financial management states
+  const [expenses, setExpenses] = useState([])
+  const [budgets, setBudgets] = useState([])
+  const [selectedFinancialView, setSelectedFinancialView] = useState('overview')
+  const [selectedCostField, setSelectedCostField] = useState('all')
+  const [selectedCostCategory, setSelectedCostCategory] = useState('all')
+  const [showExpenseForm, setShowExpenseForm] = useState(false)
+  const [showBudgetForm, setShowBudgetForm] = useState(false)
   
   const [newTask, setNewTask] = useState({
     title: '',
@@ -23,13 +32,30 @@ const MainFeature = () => {
     assignedTo: ''
   })
 
+  const [newExpense, setNewExpense] = useState({
+    description: '',
+    amount: '',
+    category: 'seeds',
+    fieldId: '',
+    date: new Date().toISOString().split('T')[0],
+    cropType: ''
+  })
+
+  const [newBudget, setNewBudget] = useState({
+    category: 'seeds',
+    budgetAmount: '',
+    fieldId: '',
+    period: 'monthly',
+    year: new Date().getFullYear()
+  })
+
   // Load data based on active tab
   useEffect(() => {
     const loadData = async () => {
       setLoading(true)
       setError(null)
       try {
-        switch (activeTab) {
+switch (activeTab) {
           case 'fields':
             const fieldsData = await fieldService.getAll()
             setFields(fieldsData || [])
@@ -41,6 +67,11 @@ const MainFeature = () => {
           case 'resources':
             const resourcesData = await resourceService.getAll()
             setResources(resourcesData || [])
+            break
+          case 'financials':
+            // Load financial data - expenses and budgets would be loaded from appropriate services
+            setExpenses([])
+            setBudgets([])
             break
         }
       } catch (err) {
@@ -97,6 +128,103 @@ const MainFeature = () => {
       toast.success(`Task ${newStatus}`)
     } catch (err) {
       toast.error('Failed to update task')
+}
+  }
+
+  // Financial management functions
+  const handleExpenseSubmit = async (e) => {
+    e.preventDefault()
+    if (!newExpense.description || !newExpense.amount || !newExpense.fieldId || !newExpense.date) {
+      toast.error('Please fill in all required fields')
+      return
+    }
+
+    try {
+      const expenseData = {
+        ...newExpense,
+        amount: parseFloat(newExpense.amount),
+        id: Date.now().toString()
+      }
+      setExpenses(prev => [expenseData, ...prev])
+      setNewExpense({
+        description: '',
+        amount: '',
+        category: 'seeds',
+        fieldId: '',
+        date: new Date().toISOString().split('T')[0],
+        cropType: ''
+      })
+      setShowExpenseForm(false)
+      toast.success('Expense recorded successfully!')
+    } catch (err) {
+      toast.error('Failed to record expense')
+    }
+  }
+
+  const handleBudgetSubmit = async (e) => {
+    e.preventDefault()
+    if (!newBudget.budgetAmount || !newBudget.fieldId) {
+      toast.error('Please fill in all required fields')
+      return
+    }
+
+    try {
+      const budgetData = {
+        ...newBudget,
+        budgetAmount: parseFloat(newBudget.budgetAmount),
+        id: Date.now().toString()
+      }
+      setBudgets(prev => [budgetData, ...prev])
+      setNewBudget({
+        category: 'seeds',
+        budgetAmount: '',
+        fieldId: '',
+        period: 'monthly',
+        year: new Date().getFullYear()
+      })
+      setShowBudgetForm(false)
+      toast.success('Budget created successfully!')
+    } catch (err) {
+      toast.error('Failed to create budget')
+    }
+  }
+
+  const deleteExpense = (expenseId) => {
+    setExpenses(prev => prev.filter(expense => expense.id !== expenseId))
+    toast.success('Expense deleted successfully!')
+  }
+
+  const getExpensesByField = (fieldId) => {
+    return expenses.filter(expense => expense.fieldId === fieldId)
+  }
+
+  const getExpensesByCategory = (category) => {
+    return expenses.filter(expense => expense.category === category)
+  }
+
+  const getExpenseChartData = () => {
+    const categories = ['seeds', 'fertilizers', 'pesticides', 'labor', 'equipment', 'fuel', 'maintenance', 'other']
+    const data = categories.map(category => {
+      return expenses.filter(exp => exp.category === category).reduce((sum, exp) => sum + exp.amount, 0)
+    })
+    return {
+      labels: categories.map(cat => cat.charAt(0).toUpperCase() + cat.slice(1)),
+      series: data
+    }
+  }
+
+  const getBudgetVsActual = () => {
+    const categories = ['seeds', 'fertilizers', 'pesticides', 'labor', 'equipment', 'fuel', 'maintenance', 'other']
+    const budgetData = categories.map(category => {
+      return budgets.filter(budget => budget.category === category).reduce((sum, budget) => sum + budget.budgetAmount, 0)
+    })
+    const actualData = categories.map(category => {
+      return expenses.filter(exp => exp.category === category).reduce((sum, exp) => sum + exp.amount, 0)
+    })
+    return {
+      categories: categories.map(cat => cat.charAt(0).toUpperCase() + cat.slice(1)),
+      budget: budgetData,
+      actual: actualData
     }
   }
 
@@ -140,10 +268,11 @@ const MainFeature = () => {
     return { status: 'good', color: 'text-green-600 dark:text-green-400', bg: 'bg-green-100 dark:bg-green-900/20' }
   }
 
-  const tabs = [
+const tabs = [
     { id: 'fields', label: 'Field Overview', icon: 'MapPin' },
     { id: 'tasks', label: 'Task Management', icon: 'CheckSquare' },
-    { id: 'resources', label: 'Resource Inventory', icon: 'Package' }
+    { id: 'resources', label: 'Resource Inventory', icon: 'Package' },
+    { id: 'financials', label: 'Financial Tracking', icon: 'DollarSign' }
   ]
 
   return (
@@ -575,10 +704,683 @@ const MainFeature = () => {
                           </motion.div>
                         )
                       })}
-                    </div>
+</div>
                   )}
                 </div>
               )}
+              {/* Financials Tab */}
+              {activeTab === 'financials' && (
+                <div>
+                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+                    <h3 className="text-xl font-semibold text-earth-800 dark:text-earth-100">
+                      Financial Tracking
+                    </h3>
+                    <div className="flex gap-2">
+                      <select
+                        value={selectedFinancialView}
+                        onChange={(e) => setSelectedFinancialView(e.target.value)}
+                        className="px-3 py-2 border border-earth-300 dark:border-earth-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-earth-700 dark:text-earth-100 text-sm"
+                      >
+                        <option value="overview">Overview</option>
+                        <option value="expenses">Expenses</option>
+                        <option value="budgets">Budgets</option>
+                        <option value="analysis">Cost Analysis</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Financial Overview */}
+                  {selectedFinancialView === 'overview' && (
+                    <div className="space-y-6">
+                      {/* Quick Stats */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {[
+                          { 
+                            label: "Total Expenses", 
+                            value: `$${expenses.reduce((sum, exp) => sum + exp.amount, 0).toLocaleString()}`,
+                            icon: "TrendingDown", 
+                            color: "text-red-600",
+                            bg: "bg-red-50 dark:bg-red-900/20"
+                          },
+                          { 
+                            label: "Total Budget", 
+                            value: `$${budgets.reduce((sum, budget) => sum + budget.budgetAmount, 0).toLocaleString()}`,
+                            icon: "Target", 
+                            color: "text-blue-600",
+                            bg: "bg-blue-50 dark:bg-blue-900/20"
+                          },
+                          { 
+                            label: "Active Budgets", 
+                            value: budgets.length,
+                            icon: "Calendar", 
+                            color: "text-green-600",
+                            bg: "bg-green-50 dark:bg-green-900/20"
+                          },
+                          { 
+                            label: "This Month", 
+                            value: `$${expenses.filter(exp => new Date(exp.date).getMonth() === new Date().getMonth()).reduce((sum, exp) => sum + exp.amount, 0).toLocaleString()}`,
+                            icon: "DollarSign", 
+                            color: "text-primary",
+                            bg: "bg-primary/10"
+                          }
+                        ].map((stat, index) => (
+                          <div key={index} className={`${stat.bg} rounded-xl p-4 border border-earth-200 dark:border-earth-700`}>
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <p className="text-earth-600 dark:text-earth-400 text-sm mb-1">{stat.label}</p>
+                                <p className="text-xl font-bold text-earth-800 dark:text-earth-100">{stat.value}</p>
+                              </div>
+                              <ApperIcon name={stat.icon} className={`h-8 w-8 ${stat.color}`} />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Expense Distribution Chart */}
+                      <div className="bg-white dark:bg-earth-700 rounded-xl p-6 border border-earth-200 dark:border-earth-700">
+                        <h4 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">Expense Distribution</h4>
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                          <div className="flex flex-col items-center justify-center">
+                            <Chart
+                              options={{
+                                chart: { type: 'donut' },
+                                labels: getExpenseChartData().labels,
+                                colors: ['#228B22', '#32CD32', '#FFB347', '#8B4513', '#CD853F'],
+                                legend: { position: 'bottom' },
+                                theme: { mode: 'light' }
+                              }}
+                              series={getExpenseChartData().series}
+                              type="donut"
+                              width="100%"
+                              height={300}
+                            />
+                          </div>
+                          <div className="space-y-3">
+                            {getExpenseChartData().labels.map((label, index) => (
+                              <div key={index} className="flex items-center justify-between p-3 bg-earth-50 dark:bg-earth-800 rounded-lg">
+                                <span className="text-earth-700 dark:text-earth-300">{label}</span>
+                                <span className="font-semibold text-earth-800 dark:text-earth-100">
+                                  ${getExpenseChartData().series[index]?.toLocaleString() || 0}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Budget vs Actual */}
+                      <div className="bg-white dark:bg-earth-700 rounded-xl p-6 border border-earth-200 dark:border-earth-700">
+                        <h4 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">Budget vs Actual</h4>
+                        <Chart
+                          options={{
+                            chart: { type: 'bar' },
+                            xaxis: { categories: getBudgetVsActual().categories },
+                            colors: ['#228B22', '#CD853F'],
+                            legend: { position: 'top' }
+                          }}
+                          series={[
+                            { name: 'Budget', data: getBudgetVsActual().budget },
+                            { name: 'Actual', data: getBudgetVsActual().actual }
+                          ]}
+                          type="bar"
+                          height={350}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Expenses Management */}
+                  {selectedFinancialView === 'expenses' && (
+                    <div>
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                        <div className="flex gap-3">
+                          <select
+                            value={selectedCostField}
+                            onChange={(e) => setSelectedCostField(e.target.value)}
+                            className="px-3 py-2 border border-earth-300 dark:border-earth-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-earth-700 dark:text-earth-100 text-sm"
+                          >
+                            <option value="all">All Fields</option>
+                            {fields.map(field => (
+                              <option key={field.id} value={field.id}>{field.name}</option>
+                            ))}
+                          </select>
+                          <select
+                            value={selectedCostCategory}
+                            onChange={(e) => setSelectedCostCategory(e.target.value)}
+                            className="px-3 py-2 border border-earth-300 dark:border-earth-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-earth-700 dark:text-earth-100 text-sm"
+                          >
+                            <option value="all">All Categories</option>
+                            <option value="seeds">Seeds</option>
+                            <option value="fertilizers">Fertilizers</option>
+                            <option value="pesticides">Pesticides</option>
+                            <option value="labor">Labor</option>
+                            <option value="equipment">Equipment</option>
+                            <option value="fuel">Fuel</option>
+                            <option value="maintenance">Maintenance</option>
+                            <option value="other">Other</option>
+                          </select>
+                        </div>
+                        <button
+                          onClick={() => setShowExpenseForm(true)}
+                          className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 flex items-center gap-2"
+                        >
+                          <ApperIcon name="Plus" className="h-4 w-4" />
+                          Add Expense
+                        </button>
+                      </div>
+
+                      {/* Expense Form Modal */}
+                      <AnimatePresence>
+                        {showExpenseForm && (
+                          <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+                            onClick={() => setShowExpenseForm(false)}
+                          >
+                            <motion.div
+                              initial={{ scale: 0.9, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              exit={{ scale: 0.9, opacity: 0 }}
+                              className="bg-white dark:bg-earth-800 rounded-xl p-6 w-full max-w-md"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <h4 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">
+                                Record Expense
+                              </h4>
+                              
+                              <form onSubmit={handleExpenseSubmit} className="space-y-4">
+                                <div>
+                                  <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                                    Description *
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={newExpense.description}
+                                    onChange={(e) => setNewExpense(prev => ({ ...prev, description: e.target.value }))}
+                                    className="w-full px-3 py-2 border border-earth-300 dark:border-earth-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-earth-700 dark:text-earth-100"
+                                    placeholder="Enter expense description"
+                                  />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div>
+                                    <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                                      Amount *
+                                    </label>
+                                    <input
+                                      type="number"
+                                      step="0.01"
+                                      value={newExpense.amount}
+                                      onChange={(e) => setNewExpense(prev => ({ ...prev, amount: e.target.value }))}
+                                      className="w-full px-3 py-2 border border-earth-300 dark:border-earth-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-earth-700 dark:text-earth-100"
+                                      placeholder="0.00"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                                      Category
+                                    </label>
+                                    <select
+                                      value={newExpense.category}
+                                      onChange={(e) => setNewExpense(prev => ({ ...prev, category: e.target.value }))}
+                                      className="w-full px-3 py-2 border border-earth-300 dark:border-earth-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-earth-700 dark:text-earth-100"
+                                    >
+                                      <option value="seeds">Seeds</option>
+                                      <option value="fertilizers">Fertilizers</option>
+                                      <option value="pesticides">Pesticides</option>
+                                      <option value="labor">Labor</option>
+                                      <option value="equipment">Equipment</option>
+                                      <option value="fuel">Fuel</option>
+                                      <option value="maintenance">Maintenance</option>
+                                      <option value="other">Other</option>
+                                    </select>
+                                  </div>
+                                </div>
+
+                                <div>
+                                  <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                                    Field *
+                                  </label>
+                                  <select
+                                    value={newExpense.fieldId}
+                                    onChange={(e) => setNewExpense(prev => ({ ...prev, fieldId: e.target.value }))}
+                                    className="w-full px-3 py-2 border border-earth-300 dark:border-earth-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-earth-700 dark:text-earth-100"
+                                  >
+                                    <option value="">Select a field</option>
+                                    {fields.map(field => (
+                                      <option key={field.id} value={field.id}>{field.name}</option>
+                                    ))}
+                                  </select>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div>
+                                    <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                                      Date *
+                                    </label>
+                                    <input
+                                      type="date"
+                                      value={newExpense.date}
+                                      onChange={(e) => setNewExpense(prev => ({ ...prev, date: e.target.value }))}
+                                      className="w-full px-3 py-2 border border-earth-300 dark:border-earth-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-earth-700 dark:text-earth-100"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                                      Crop Type
+                                    </label>
+                                    <input
+                                      type="text"
+                                      value={newExpense.cropType}
+                                      onChange={(e) => setNewExpense(prev => ({ ...prev, cropType: e.target.value }))}
+                                      className="w-full px-3 py-2 border border-earth-300 dark:border-earth-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-earth-700 dark:text-earth-100"
+                                      placeholder="Optional"
+                                    />
+                                  </div>
+                                </div>
+
+                                <div className="flex gap-3 pt-4">
+                                  <button
+                                    type="submit"
+                                    className="flex-1 bg-primary hover:bg-primary-dark text-white py-2 px-4 rounded-lg font-medium transition-colors"
+                                  >
+                                    Record Expense
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => setShowExpenseForm(false)}
+                                    className="flex-1 bg-earth-200 dark:bg-earth-700 text-earth-800 dark:text-earth-200 py-2 px-4 rounded-lg font-medium hover:bg-earth-300 dark:hover:bg-earth-600 transition-colors"
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+                              </form>
+                            </motion.div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+
+                      {/* Expenses List */}
+                      <div className="space-y-4">
+                        {expenses
+                          .filter(expense => {
+                            const fieldMatch = selectedCostField === 'all' || expense.fieldId === selectedCostField
+                            const categoryMatch = selectedCostCategory === 'all' || expense.category === selectedCostCategory
+                            return fieldMatch && categoryMatch
+                          })
+                          .map((expense) => (
+                            <motion.div
+                              key={expense.id}
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className="bg-white dark:bg-earth-700 rounded-lg p-4 border border-earth-200 dark:border-earth-600 hover:shadow-earth-hover transition-all duration-300"
+                            >
+                              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-3 mb-2">
+                                    <h4 className="font-semibold text-earth-800 dark:text-earth-100">
+                                      {expense.description}
+                                    </h4>
+                                    <span className="px-2 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium capitalize">
+                                      {expense.category}
+                                    </span>
+                                  </div>
+                                  
+                                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm text-earth-600 dark:text-earth-400">
+                                    <p>💰 ${expense.amount.toLocaleString()}</p>
+                                    <p>📍 {getFieldById(expense.fieldId).name}</p>
+                                    <p>📅 {new Date(expense.date).toLocaleDateString()}</p>
+                                  </div>
+                                  {expense.cropType && (
+                                    <p className="text-sm text-earth-500 dark:text-earth-400 mt-1">
+                                      🌱 {expense.cropType}
+                                    </p>
+                                  )}
+                                </div>
+
+                                <div className="flex gap-2 self-start sm:self-auto">
+                                  <button
+                                    onClick={() => deleteExpense(expense.id)}
+                                    className="px-3 py-1 bg-red-600 text-white text-xs rounded-lg hover:bg-red-700 transition-colors"
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              </div>
+                            </motion.div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Budget Management */}
+                  {selectedFinancialView === 'budgets' && (
+                    <div>
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                        <div className="text-sm text-earth-600 dark:text-earth-400">
+                          {budgets.length} budgets created
+                        </div>
+                        <button
+                          onClick={() => setShowBudgetForm(true)}
+                          className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 flex items-center gap-2"
+                        >
+                          <ApperIcon name="Plus" className="h-4 w-4" />
+                          Create Budget
+                        </button>
+                      </div>
+
+                      {/* Budget Form Modal */}
+                      <AnimatePresence>
+                        {showBudgetForm && (
+                          <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+                            onClick={() => setShowBudgetForm(false)}
+                          >
+                            <motion.div
+                              initial={{ scale: 0.9, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              exit={{ scale: 0.9, opacity: 0 }}
+                              className="bg-white dark:bg-earth-800 rounded-xl p-6 w-full max-w-md"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <h4 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">
+                                Create Budget
+                              </h4>
+                              
+                              <form onSubmit={handleBudgetSubmit} className="space-y-4">
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div>
+                                    <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                                      Category
+                                    </label>
+                                    <select
+                                      value={newBudget.category}
+                                      onChange={(e) => setNewBudget(prev => ({ ...prev, category: e.target.value }))}
+                                      className="w-full px-3 py-2 border border-earth-300 dark:border-earth-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-earth-700 dark:text-earth-100"
+                                    >
+                                      <option value="seeds">Seeds</option>
+                                      <option value="fertilizers">Fertilizers</option>
+                                      <option value="pesticides">Pesticides</option>
+                                      <option value="labor">Labor</option>
+                                      <option value="equipment">Equipment</option>
+                                      <option value="fuel">Fuel</option>
+                                      <option value="maintenance">Maintenance</option>
+                                      <option value="other">Other</option>
+                                    </select>
+                                  </div>
+                                  <div>
+                                    <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                                      Amount *
+                                    </label>
+                                    <input
+                                      type="number"
+                                      step="0.01"
+                                      value={newBudget.budgetAmount}
+                                      onChange={(e) => setNewBudget(prev => ({ ...prev, budgetAmount: e.target.value }))}
+                                      className="w-full px-3 py-2 border border-earth-300 dark:border-earth-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-earth-700 dark:text-earth-100"
+                                      placeholder="0.00"
+                                    />
+                                  </div>
+                                </div>
+
+                                <div>
+                                  <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                                    Field *
+                                  </label>
+                                  <select
+                                    value={newBudget.fieldId}
+                                    onChange={(e) => setNewBudget(prev => ({ ...prev, fieldId: e.target.value }))}
+                                    className="w-full px-3 py-2 border border-earth-300 dark:border-earth-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-earth-700 dark:text-earth-100"
+                                  >
+                                    <option value="">Select a field</option>
+                                    {fields.map(field => (
+                                      <option key={field.id} value={field.id}>{field.name}</option>
+                                    ))}
+                                  </select>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div>
+                                    <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                                      Period
+                                    </label>
+                                    <select
+                                      value={newBudget.period}
+                                      onChange={(e) => setNewBudget(prev => ({ ...prev, period: e.target.value }))}
+                                      className="w-full px-3 py-2 border border-earth-300 dark:border-earth-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-earth-700 dark:text-earth-100"
+                                    >
+                                      <option value="monthly">Monthly</option>
+                                      <option value="quarterly">Quarterly</option>
+                                      <option value="yearly">Yearly</option>
+                                    </select>
+                                  </div>
+                                  <div>
+                                    <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                                      Year
+                                    </label>
+                                    <input
+                                      type="number"
+                                      value={newBudget.year}
+                                      onChange={(e) => setNewBudget(prev => ({ ...prev, year: parseInt(e.target.value) }))}
+                                      className="w-full px-3 py-2 border border-earth-300 dark:border-earth-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-earth-700 dark:text-earth-100"
+                                    />
+                                  </div>
+                                </div>
+
+                                <div className="flex gap-3 pt-4">
+                                  <button
+                                    type="submit"
+                                    className="flex-1 bg-primary hover:bg-primary-dark text-white py-2 px-4 rounded-lg font-medium transition-colors"
+                                  >
+                                    Create Budget
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => setShowBudgetForm(false)}
+                                    className="flex-1 bg-earth-200 dark:bg-earth-700 text-earth-800 dark:text-earth-200 py-2 px-4 rounded-lg font-medium hover:bg-earth-300 dark:hover:bg-earth-600 transition-colors"
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+                              </form>
+                            </motion.div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+
+                      {/* Budgets List */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {budgets.map((budget) => {
+                          const spent = expenses
+                            .filter(exp => exp.fieldId === budget.fieldId && exp.category === budget.category)
+                            .reduce((sum, exp) => sum + exp.amount, 0)
+                          const percentage = (spent / budget.budgetAmount) * 100
+                          
+                          return (
+                            <motion.div
+                              key={budget.id}
+                              initial={{ opacity: 0, scale: 0.9 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              className="bg-white dark:bg-earth-700 rounded-lg p-4 border border-earth-200 dark:border-earth-600 hover:shadow-earth-hover transition-all duration-300"
+                            >
+                              <div className="flex items-start justify-between mb-3">
+                                <div>
+                                  <h4 className="font-semibold text-earth-800 dark:text-earth-100 capitalize">
+                                    {budget.category}
+                                  </h4>
+                                  <p className="text-sm text-earth-600 dark:text-earth-400">
+                                    {getFieldById(budget.fieldId).name}
+                                  </p>
+                                </div>
+                                <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-xs font-medium">
+                                  {budget.period}
+                                </span>
+                              </div>
+
+                              <div className="space-y-2">
+                                <div className="flex justify-between text-sm">
+                                  <span className="text-earth-600 dark:text-earth-400">Budget:</span>
+                                  <span className="font-medium text-earth-800 dark:text-earth-200">
+                                    ${budget.budgetAmount.toLocaleString()}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                  <span className="text-earth-600 dark:text-earth-400">Spent:</span>
+                                  <span className="font-medium text-earth-800 dark:text-earth-200">
+                                    ${spent.toLocaleString()}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                  <span className="text-earth-600 dark:text-earth-400">Remaining:</span>
+                                  <span className={`font-medium ${budget.budgetAmount - spent >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                    ${(budget.budgetAmount - spent).toLocaleString()}
+                                  </span>
+                                </div>
+                              </div>
+
+                              <div className="mt-4">
+                                <div className="flex justify-between text-xs text-earth-500 dark:text-earth-400 mb-1">
+                                  <span>Usage</span>
+                                  <span>{percentage.toFixed(1)}%</span>
+                                </div>
+                                <div className="w-full bg-earth-200 dark:bg-earth-600 rounded-full h-2">
+                                  <div
+                                    className={`h-2 rounded-full transition-all duration-300 ${
+                                      percentage > 100 ? 'bg-red-500' :
+                                      percentage > 80 ? 'bg-orange-500' : 'bg-green-500'
+                                    }`}
+                                    style={{ width: `${Math.min(percentage, 100)}%` }}
+                                  />
+                                </div>
+                              </div>
+                            </motion.div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Cost Analysis */}
+                  {selectedFinancialView === 'analysis' && (
+                    <div className="space-y-6">
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        {/* Cost per Field */}
+                        <div className="bg-white dark:bg-earth-700 rounded-xl p-6 border border-earth-200 dark:border-earth-700">
+                          <h4 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">
+                            Cost per Field
+                          </h4>
+                          <div className="space-y-3">
+                            {fields.map((field) => {
+                              const fieldExpenses = getExpensesByField(field.id)
+                              const totalCost = fieldExpenses.reduce((sum, exp) => sum + exp.amount, 0)
+                              const costPerHectare = field.size ? (totalCost / field.size) : 0
+                              
+                              return (
+                                <div key={field.id} className="p-3 bg-earth-50 dark:bg-earth-800 rounded-lg">
+                                  <div className="flex justify-between items-center mb-2">
+                                    <h5 className="font-medium text-earth-800 dark:text-earth-100">
+                                      {field.name}
+                                    </h5>
+                                    <span className="text-sm text-earth-600 dark:text-earth-400">
+                                      {field.size} ha
+                                    </span>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                      <span className="text-earth-600 dark:text-earth-400">Total Cost:</span>
+                                      <p className="font-semibold text-earth-800 dark:text-earth-200">
+                                        ${totalCost.toLocaleString()}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <span className="text-earth-600 dark:text-earth-400">Cost/Hectare:</span>
+                                      <p className="font-semibold text-earth-800 dark:text-earth-200">
+                                        ${costPerHectare.toLocaleString()}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+                              )
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Cost by Category */}
+                        <div className="bg-white dark:bg-earth-700 rounded-xl p-6 border border-earth-200 dark:border-earth-700">
+                          <h4 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">
+                            Cost by Category
+                          </h4>
+                          <div className="space-y-3">
+                            {['seeds', 'fertilizers', 'pesticides', 'labor', 'equipment', 'fuel', 'maintenance', 'other'].map((category) => {
+                              const categoryExpenses = getExpensesByCategory(category)
+                              const totalCost = categoryExpenses.reduce((sum, exp) => sum + exp.amount, 0)
+                              const percentage = expenses.length ? (totalCost / expenses.reduce((sum, exp) => sum + exp.amount, 0)) * 100 : 0
+                              
+                              return (
+                                <div key={category} className="p-3 bg-earth-50 dark:bg-earth-800 rounded-lg">
+                                  <div className="flex justify-between items-center mb-2">
+                                    <h5 className="font-medium text-earth-800 dark:text-earth-100 capitalize">
+                                      {category}
+                                    </h5>
+                                    <span className="text-sm text-earth-600 dark:text-earth-400">
+                                      {percentage.toFixed(1)}%
+                                    </span>
+                                  </div>
+                                  <div className="flex justify-between items-center">
+                                    <span className="font-semibold text-earth-800 dark:text-earth-200">
+                                      ${totalCost.toLocaleString()}
+                                    </span>
+                                    <div className="w-20 bg-earth-200 dark:bg-earth-600 rounded-full h-2">
+                                      <div
+                                        className="h-2 bg-primary rounded-full transition-all duration-300"
+                                        style={{ width: `${percentage}%` }}
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                              )
+                            })}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Monthly Expense Trend */}
+                      <div className="bg-white dark:bg-earth-700 rounded-xl p-6 border border-earth-200 dark:border-earth-700">
+                        <h4 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">
+                          Monthly Expense Trend
+                        </h4>
+                        <Chart
+                          options={{
+                            chart: { type: 'line' },
+                            xaxis: {
+                              categories: Array.from({length: 12}, (_, i) => 
+                                new Date(2024, i).toLocaleDateString('en-US', { month: 'short' })
+                              )
+                            },
+                            colors: ['#228B22'],
+                            stroke: { curve: 'smooth' }
+                          }}
+                          series={[{
+                            name: 'Monthly Expenses',
+                            data: Array.from({length: 12}, (_, month) => {
+                              return expenses
+                                .filter(exp => new Date(exp.date).getMonth() === month)
+                                .reduce((sum, exp) => sum + exp.amount, 0)
+                            })
+                          }]}
+                          type="line"
+                          height={300}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+)}
             </motion.div>
           )}
         </AnimatePresence>

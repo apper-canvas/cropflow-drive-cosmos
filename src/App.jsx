@@ -29,12 +29,13 @@ function App() {
                 <h1 className="text-xl font-bold text-primary dark:text-primary-light">CropFlow</h1>
               </div>
 
-              {/* Navigation Items */}
+{/* Navigation Items */}
               <div className="hidden md:flex items-center space-x-6">
                 <a href="#" className="text-earth-700 dark:text-earth-300 hover:text-primary transition-colors">Dashboard</a>
                 <a href="#" className="text-earth-700 dark:text-earth-300 hover:text-primary transition-colors">Fields</a>
                 <a href="#" className="text-earth-700 dark:text-earth-300 hover:text-primary transition-colors">Resources</a>
                 <a href="#" className="text-earth-700 dark:text-earth-300 hover:text-primary transition-colors">Tasks</a>
+                <a href="#" className="text-earth-700 dark:text-earth-300 hover:text-primary transition-colors">Financials</a>
               </div>
 
               {/* Actions */}
