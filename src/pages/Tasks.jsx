@@ -3,10 +3,11 @@ import { motion } from 'framer-motion'
 import { toast } from 'react-toastify'
 import { format } from 'date-fns'
 import ApperIcon from '../components/ApperIcon'
-import { taskService } from '../services'
+import { taskService, fieldService } from '../services'
 
 const Tasks = () => {
-  const [tasks, setTasks] = useState([])
+const [tasks, setTasks] = useState([])
+  const [fields, setFields] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
@@ -28,8 +29,17 @@ const Tasks = () => {
 
   useEffect(() => {
     loadTasks()
+    loadFields()
   }, [])
 
+  const loadFields = async () => {
+    try {
+      const result = await fieldService.getAll()
+      setFields(result || [])
+    } catch (err) {
+      console.error('Failed to load fields:', err.message)
+    }
+  }
   const loadTasks = async () => {
     setLoading(true)
     try {
@@ -473,18 +483,22 @@ const Tasks = () => {
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-2 gap-4">
+<div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
                       Field
                     </label>
-                    <input
-                      type="text"
+                    <select
                       value={newTask.field}
                       onChange={(e) => setNewTask({...newTask, field: e.target.value})}
                       className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
                       required
-                    />
+                    >
+                      <option value="">Select a field</option>
+                      {fields.map(field => (
+                        <option key={field.id} value={field.name}>{field.name}</option>
+                      ))}
+                    </select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
@@ -641,36 +655,41 @@ const Tasks = () => {
                       value={editingTask.dueDate}
                       onChange={(e) => setEditingTask({...editingTask, dueDate: e.target.value})}
                       className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
-                      required
+required
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
                       Field
                     </label>
-                    <input
-                      type="text"
+                    <select
                       value={editingTask.field}
                       onChange={(e) => setEditingTask({...editingTask, field: e.target.value})}
+                      className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                      required
+                    >
+                      <option value="">Select a field</option>
+                      {fields.map(field => (
+                        <option key={field.id} value={field.name}>{field.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                      Estimated Hours
+                    </label>
+                    <input
+                      type="number"
+                      value={editingTask.estimatedHours}
+                      onChange={(e) => setEditingTask({...editingTask, estimatedHours: e.target.value})}
                       className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
                       required
                     />
                   </div>
                 </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
-                    Estimated Hours
-                  </label>
-                  <input
-                    type="number"
-                    value={editingTask.estimatedHours}
-                    onChange={(e) => setEditingTask({...editingTask, estimatedHours: e.target.value})}
-                    className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
-                    required
-                  />
-                </div>
-                
                 <div className="flex gap-3 pt-4">
                   <button
                     type="button"
