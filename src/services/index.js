@@ -3,6 +3,7 @@ export { default as fieldService } from './api/fieldService.js'
 export { default as resourceService } from './api/resourceService.js'
 export { default as taskService } from './api/taskService.js'
 export { default as expenseService } from './api/expenseService.js'
+export { default as incomeService } from './api/incomeService.js'
 export { default as cropService } from './api/cropService.js'
 export { default as equipmentService } from './api/equipmentService.js'
 
@@ -12,6 +13,7 @@ export const services = {
   resource: () => import('./api/resourceService.js'),
   task: () => import('./api/taskService.js'),
   expense: () => import('./api/expenseService.js'),
+  income: () => import('./api/incomeService.js'),
   crop: () => import('./api/cropService.js'),
   equipment: () => import('./api/equipmentService.js')
 }

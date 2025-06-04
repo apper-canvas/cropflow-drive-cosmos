@@ -3,10 +3,11 @@ import { motion } from 'framer-motion'
 import { toast } from 'react-toastify'
 import ReactApexCharts from 'react-apexcharts'
 import ApperIcon from '../components/ApperIcon'
-import { expenseService } from '../services'
+import { expenseService, incomeService } from '../services'
 
 const Financials = () => {
     const [expenses, setExpenses] = useState([])
+    const [income, setIncome] = useState([])
     const [budgets, setBudgets] = useState([])
     const [fields, setFields] = useState([])
     const [loading, setLoading] = useState(false)
@@ -17,10 +18,10 @@ const Financials = () => {
   const [showAddModal, setShowAddModal] = useState(false)
   const [editingExpense, setEditingExpense] = useState(null)
   const [showAddIncomeModal, setShowAddIncomeModal] = useState(false)
-  const [editingIncome, setEditingIncome] = useState(null)
+const [editingIncome, setEditingIncome] = useState(null)
   const [activeTab, setActiveTab] = useState('expenses')
-  const [filteredIncome, setFilteredIncome] = useState([])
   const [profitabilityData, setProfitabilityData] = useState({})
+  const [monthlyIncome, setMonthlyIncome] = useState(0)
   const [newExpense, setNewExpense] = useState({
     description: '',
     amount: '',
@@ -43,6 +44,7 @@ const Financials = () => {
 
 useEffect(() => {
     loadExpenses()
+    loadIncome()
     loadBudgets()
     loadFields()
   }, [])
@@ -78,6 +80,30 @@ const { fieldService } = await import('../services')
     } catch (err) {
       console.error('Failed to load budgets:', err)
       toast.error('Failed to load budget data')
+    }
+}
+
+  const loadIncome = async () => {
+    setLoading(true)
+    try {
+      const result = await incomeService.getAll()
+      setIncome(result || [])
+      
+      // Calculate monthly income
+      const currentMonth = new Date()
+      const monthly = result
+        .filter(income => {
+          const incomeDate = new Date(income.date)
+          return incomeDate.getMonth() === currentMonth.getMonth() && 
+                 incomeDate.getFullYear() === currentMonth.getFullYear()
+        })
+        .reduce((sum, income) => sum + parseFloat(income.amount), 0)
+      setMonthlyIncome(monthly)
+    } catch (err) {
+      setError(err.message)
+      toast.error('Failed to load income records')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -117,21 +143,25 @@ const { fieldService } = await import('../services')
       }
     }
   }
-  const handleDeleteIncome = async (incomeId) => {
+const handleDeleteIncome = async (incomeId) => {
     if (window.confirm('Are you sure you want to delete this income?')) {
       try {
-        // Delete income logic here
+        await incomeService.delete(incomeId)
+        setIncome(prev => prev.filter(i => i.id !== incomeId))
         toast.success('Income deleted successfully!')
+        // Reload income to update monthly calculations
+        loadIncome()
       } catch (err) {
         toast.error('Failed to delete income')
       }
     }
   }
 
-  const handleAddIncome = async (e) => {
+const handleAddIncome = async (e) => {
     e.preventDefault()
     try {
-      // Create income record logic here
+      const result = await incomeService.create(newIncome)
+      setIncome(prev => [...prev, result])
       setNewIncome({ 
         description: '', 
         amount: '', 
@@ -145,6 +175,8 @@ const { fieldService } = await import('../services')
       })
       setShowAddIncomeModal(false)
       toast.success('Income added successfully!')
+      // Reload income to update monthly calculations
+      loadIncome()
     } catch (err) {
       toast.error('Failed to add income')
     }
@@ -153,9 +185,12 @@ const { fieldService } = await import('../services')
   const handleEditIncome = async (e) => {
     e.preventDefault()
     try {
-      // Update income record logic here
+      const result = await incomeService.update(editingIncome.id, editingIncome)
+      setIncome(prev => prev.map(i => i.id === editingIncome.id ? result : i))
       setEditingIncome(null)
       toast.success('Income updated successfully!')
+      // Reload income to update monthly calculations
+      loadIncome()
     } catch (err) {
       toast.error('Failed to update income')
     }
@@ -189,17 +224,36 @@ expense.field.toLowerCase().includes(searchTerm.toLowerCase())
     })
     .reduce((sum, expense) => sum + parseFloat(expense.amount), 0)
 
+// Calculate income summary statistics
+  const totalIncome = income.reduce((sum, incomeItem) => sum + parseFloat(incomeItem.amount), 0)
+  const avgPerSale = income.length > 0 ? totalIncome / income.length : 0
+
+  // Filter income for search and display
+  const filteredIncome = income
+    .filter(incomeItem => 
+      incomeItem.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      incomeItem.cropType.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      incomeItem.field.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      incomeItem.buyer.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => {
+      if (sortBy === 'date') return new Date(b.date) - new Date(a.date)
+      if (sortBy === 'amount') return parseFloat(b.amount) - parseFloat(a.amount)
+      if (sortBy === 'cropType') return a.cropType.localeCompare(b.cropType)
+      return 0
+    })
+
   // Calculate profitability data
   const calculateProfitabilityData = () => {
     const data = {}
     
     // Group income by crop type
-    filteredIncome.forEach(income => {
-      const crop = income.cropType
+    income.forEach(incomeItem => {
+      const crop = incomeItem.cropType
       if (!data[crop]) {
         data[crop] = { income: 0, expenses: 0, profit: 0, margin: 0 }
-      }
-      data[crop].income += parseFloat(income.amount || 0)
+}
+      data[crop].income += parseFloat(incomeItem.amount || 0)
     })
     
     // Group expenses by field/crop (assuming field corresponds to crop)
@@ -220,6 +274,12 @@ expense.field.toLowerCase().includes(searchTerm.toLowerCase())
   }
 
   const currentProfitabilityData = calculateProfitabilityData()
+
+// Group income by crop type for chart (when in income tab)
+  const incomeByCategory = income.reduce((acc, incomeItem) => {
+    acc[incomeItem.cropType] = (acc[incomeItem.cropType] || 0) + parseFloat(incomeItem.amount)
+    return acc
+  }, {})
 
   // Group expenses by category for chart
   const expensesByCategory = expenses.reduce((acc, expense) => {
@@ -491,121 +551,302 @@ expense.field.toLowerCase().includes(searchTerm.toLowerCase())
           </div>
         </motion.div>
 
-        {/* Summary Cards */}
+{/* Summary Cards */}
         <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-earth-600 dark:text-earth-400 text-sm mb-1">Total Expenses</p>
-                <p className="text-2xl font-bold text-earth-800 dark:text-earth-100">
-                  ${totalExpenses.toFixed(2)}
-                </p>
+          {activeTab === 'expenses' && (
+            <>
+              <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-earth-600 dark:text-earth-400 text-sm mb-1">Total Expenses</p>
+                    <p className="text-2xl font-bold text-earth-800 dark:text-earth-100">
+                      ${totalExpenses.toFixed(2)}
+                    </p>
+                  </div>
+                  <ApperIcon name="DollarSign" className="h-8 w-8 text-red-600" />
+                </div>
               </div>
-              <ApperIcon name="DollarSign" className="h-8 w-8 text-red-600" />
-            </div>
-          </div>
+              
+              <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-earth-600 dark:text-earth-400 text-sm mb-1">This Month</p>
+                    <p className="text-2xl font-bold text-earth-800 dark:text-earth-100">
+                      ${monthlyExpenses.toFixed(2)}
+                    </p>
+                  </div>
+                  <ApperIcon name="Calendar" className="h-8 w-8 text-blue-600" />
+                </div>
+              </div>
+              
+              <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-earth-600 dark:text-earth-400 text-sm mb-1">Avg per Expense</p>
+                    <p className="text-2xl font-bold text-earth-800 dark:text-earth-100">
+                      ${expenses.length > 0 ? (totalExpenses / expenses.length).toFixed(2) : '0.00'}
+                    </p>
+                  </div>
+                  <ApperIcon name="TrendingUp" className="h-8 w-8 text-green-600" />
+                </div>
+              </div>
+            </>
+          )}
           
-          <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
-            <div className="flex items-center justify-between">
-              <div>
-<p className="text-earth-600 dark:text-earth-400 text-sm mb-1">This Month</p>
-                <p className="text-2xl font-bold text-earth-800 dark:text-earth-100">
-                  ${monthlyExpenses.toFixed(2)}
-                </p>
+          {activeTab === 'income' && (
+            <>
+              <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-earth-600 dark:text-earth-400 text-sm mb-1">Total Income</p>
+                    <p className="text-2xl font-bold text-earth-800 dark:text-earth-100">
+                      ${totalIncome.toFixed(2)}
+                    </p>
+                  </div>
+                  <ApperIcon name="DollarSign" className="h-8 w-8 text-green-600" />
+                </div>
               </div>
-              <ApperIcon name="Calendar" className="h-8 w-8 text-blue-600" />
-            </div>
-          </div>
-          <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-earth-600 dark:text-earth-400 text-sm mb-1">Avg per Expense</p>
-                <p className="text-2xl font-bold text-earth-800 dark:text-earth-100">
-                  ${expenses.length > 0 ? (totalExpenses / expenses.length).toFixed(2) : '0.00'}
-                </p>
+              
+              <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-earth-600 dark:text-earth-400 text-sm mb-1">This Month</p>
+                    <p className="text-2xl font-bold text-earth-800 dark:text-earth-100">
+                      ${monthlyIncome.toFixed(2)}
+                    </p>
+                  </div>
+                  <ApperIcon name="Calendar" className="h-8 w-8 text-blue-600" />
+                </div>
               </div>
-              <ApperIcon name="TrendingUp" className="h-8 w-8 text-green-600" />
-            </div>
-          </div>
+              
+              <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-earth-600 dark:text-earth-400 text-sm mb-1">Avg per Sale</p>
+                    <p className="text-2xl font-bold text-earth-800 dark:text-earth-100">
+                      ${avgPerSale.toFixed(2)}
+                    </p>
+                  </div>
+                  <ApperIcon name="TrendingUp" className="h-8 w-8 text-green-600" />
+                </div>
+              </div>
+            </>
+          )}
+          
+          {activeTab === 'profitability' && (
+            <>
+              <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-earth-600 dark:text-earth-400 text-sm mb-1">Total Income</p>
+                    <p className="text-2xl font-bold text-earth-800 dark:text-earth-100">
+                      ${totalIncome.toFixed(2)}
+                    </p>
+                  </div>
+                  <ApperIcon name="TrendingUp" className="h-8 w-8 text-green-600" />
+                </div>
+              </div>
+              
+              <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-earth-600 dark:text-earth-400 text-sm mb-1">Total Expenses</p>
+                    <p className="text-2xl font-bold text-earth-800 dark:text-earth-100">
+                      ${totalExpenses.toFixed(2)}
+                    </p>
+                  </div>
+                  <ApperIcon name="DollarSign" className="h-8 w-8 text-red-600" />
+                </div>
+              </div>
+              
+              <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-earth-600 dark:text-earth-400 text-sm mb-1">Net Profit</p>
+                    <p className={`text-2xl font-bold ${(totalIncome - totalExpenses) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      ${(totalIncome - totalExpenses).toFixed(2)}
+                    </p>
+                  </div>
+                  <ApperIcon name="BarChart3" className="h-8 w-8 text-blue-600" />
+                </div>
+              </div>
+            </>
+          )}
         </motion.div>
 
-        {/* Financial Reports Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {/* Expense Distribution Chart */}
-          <motion.div variants={itemVariants}>
-            <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
-              <h3 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">
-                Expense Distribution
-              </h3>
-              <div className="chart-container">
-                {Object.keys(expensesByCategory).length > 0 ? (
-                  <div className="chart-wrapper">
-                    <ReactApexCharts 
-                      options={expenseChartData.options} 
-                      series={expenseChartData.series} 
-                      type="donut" 
-                      height={350}
-                    />
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-center h-64 text-earth-500 dark:text-earth-400">
-                    <div className="text-center">
-                      <ApperIcon name="PieChart" className="h-12 w-12 mx-auto mb-2" />
-                      <p>No expense data available</p>
+{/* Financial Reports Charts */}
+        {(activeTab === 'expenses' || activeTab === 'profitability') && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            {/* Expense Distribution Chart */}
+            <motion.div variants={itemVariants}>
+              <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
+                <h3 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">
+                  Expense Distribution
+                </h3>
+                <div className="chart-container">
+                  {Object.keys(expensesByCategory).length > 0 ? (
+                    <div className="chart-wrapper">
+                      <ReactApexCharts 
+                        options={expenseChartData.options} 
+                        series={expenseChartData.series} 
+                        type="donut" 
+                        height={350}
+                      />
                     </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Budget vs Actual Chart */}
-          <motion.div variants={itemVariants}>
-            <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
-              <h3 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">
-                Budget vs Actual
-              </h3>
-              <div className="chart-container">
-                {budgetCategories.length > 0 ? (
-                  <div className="chart-wrapper">
-                    <ReactApexCharts 
-                      options={budgetChartData.options} 
-                      series={budgetChartData.series} 
-                      type="bar" 
-                      height={350}
-                    />
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-center h-64 text-earth-500 dark:text-earth-400">
-                    <div className="text-center">
-                      <ApperIcon name="BarChart" className="h-12 w-12 mx-auto mb-2" />
-                      <p>No budget data available</p>
+                  ) : (
+                    <div className="flex items-center justify-center h-64 text-earth-500 dark:text-earth-400">
+                      <div className="text-center">
+                        <ApperIcon name="PieChart" className="h-12 w-12 mx-auto mb-2" />
+                        <p>No expense data available</p>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
-            </div>
-          </motion.div>
-        </div>
+            </motion.div>
 
-        {/* Controls */}
+            {/* Budget vs Actual Chart */}
+            <motion.div variants={itemVariants}>
+              <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
+                <h3 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">
+                  Budget vs Actual
+                </h3>
+                <div className="chart-container">
+                  {budgetCategories.length > 0 ? (
+                    <div className="chart-wrapper">
+                      <ReactApexCharts 
+                        options={budgetChartData.options} 
+                        series={budgetChartData.series} 
+                        type="bar" 
+                        height={350}
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center h-64 text-earth-500 dark:text-earth-400">
+                      <div className="text-center">
+                        <ApperIcon name="BarChart" className="h-12 w-12 mx-auto mb-2" />
+                        <p>No budget data available</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {/* Income Charts */}
+        {activeTab === 'income' && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            {/* Income Distribution by Crop Chart */}
+            <motion.div variants={itemVariants}>
+              <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
+                <h3 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">
+                  Income by Crop Type
+                </h3>
+                <div className="chart-container">
+                  {Object.keys(incomeByCategory).length > 0 ? (
+                    <div className="chart-wrapper">
+                      <ReactApexCharts 
+                        options={{
+                          chart: { type: 'donut', background: 'transparent', height: 350 },
+                          labels: Object.keys(incomeByCategory),
+                          colors: ['#22C55E', '#10B981', '#059669', '#047857'],
+                          legend: { position: 'bottom', labels: { colors: '#6B7280' } },
+                          dataLabels: {
+                            enabled: true,
+                            formatter: function (val) { return val.toFixed(1) + '%' }
+                          },
+                          tooltip: {
+                            y: { formatter: function (val) { return '$' + val.toFixed(2) } }
+                          }
+                        }} 
+                        series={Object.values(incomeByCategory)} 
+                        type="donut" 
+                        height={350}
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center h-64 text-earth-500 dark:text-earth-400">
+                      <div className="text-center">
+                        <ApperIcon name="PieChart" className="h-12 w-12 mx-auto mb-2" />
+                        <p>No income data available</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Monthly Income Trend Chart */}
+            <motion.div variants={itemVariants}>
+              <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
+                <h3 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">
+                  Income by Field
+                </h3>
+                <div className="chart-container">
+                  {income.length > 0 ? (
+                    <div className="chart-wrapper">
+                      <ReactApexCharts 
+                        options={{
+                          chart: { type: 'bar', background: 'transparent', height: 350 },
+                          xaxis: { 
+                            categories: [...new Set(income.map(i => i.field))],
+                            labels: { style: { colors: '#6B7280' } }
+                          },
+                          yaxis: {
+                            labels: {
+                              style: { colors: '#6B7280' },
+                              formatter: function (val) { return '$' + val.toFixed(0) }
+                            }
+                          },
+                          colors: ['#22C55E'],
+                          plotOptions: { bar: { columnWidth: '60%', borderRadius: 4 } },
+                          dataLabels: { enabled: false }
+                        }} 
+                        series={[{
+                          name: 'Income',
+                          data: [...new Set(income.map(i => i.field))].map(field => 
+                            income.filter(i => i.field === field)
+                              .reduce((sum, i) => sum + parseFloat(i.amount), 0)
+                          )
+                        }]} 
+                        type="bar" 
+                        height={350}
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center h-64 text-earth-500 dark:text-earth-400">
+                      <div className="text-center">
+                        <ApperIcon name="BarChart" className="h-12 w-12 mx-auto mb-2" />
+                        <p>No income data available</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+{/* Controls */}
         <motion.div variants={itemVariants} className="mb-8">
           <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
-            <h3 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">
+            <h3 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-6">
               Filter & Search
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
-                  Search Expenses
+                  {activeTab === 'income' ? 'Search Income' : 'Search Expenses'}
                 </label>
                 <div className="relative">
                   <ApperIcon name="Search" className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-earth-400" />
                   <input
                     type="text"
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Search by description, category, or field..."
+onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder={activeTab === 'income' ? 'Search by description, crop, field, or buyer...' : 'Search by description, category, or field...'}
                     className="w-full pl-10 pr-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
                   />
                 </div>
@@ -626,22 +867,34 @@ expense.field.toLowerCase().includes(searchTerm.toLowerCase())
                 </select>
               </div>
               
-              <div>
+<div>
                 <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
-                  Filter by Category
+                  {activeTab === 'income' ? 'Filter by Crop' : 'Filter by Category'}
                 </label>
                 <select
 value={filterBy}
                   onChange={(e) => setFilterBy(e.target.value)}
                   className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
-                >
-                  <option value="all">All Categories</option>
-                  <option value="seeds">Seeds</option>
-                  <option value="fertilizer">Fertilizer</option>
-                  <option value="equipment">Equipment</option>
-                  <option value="labor">Labor</option>
-                  <option value="fuel">Fuel</option>
-                  <option value="maintenance">Maintenance</option>
+>
+                  {activeTab === 'income' ? (
+                    <>
+                      <option value="all">All Crops</option>
+                      <option value="Corn">Corn</option>
+                      <option value="Wheat">Wheat</option>
+                      <option value="Soybeans">Soybeans</option>
+                      <option value="Barley">Barley</option>
+                    </>
+                  ) : (
+                    <>
+                      <option value="all">All Categories</option>
+                      <option value="seeds">Seeds</option>
+                      <option value="fertilizer">Fertilizer</option>
+                      <option value="equipment">Equipment</option>
+                      <option value="labor">Labor</option>
+                      <option value="fuel">Fuel</option>
+                      <option value="maintenance">Maintenance</option>
+                    </>
+                  )}
                 </select>
               </div>
             </div>
@@ -821,9 +1074,9 @@ value={filterBy}
                   </div>
                 </motion.div>
               ))
-            ) : (
+) : (
               <div className="flex items-center justify-center h-64 text-earth-500 dark:text-earth-400">
-<div className="text-center">
+                <div className="text-center">
                   <ApperIcon name="TrendingUp" className="h-12 w-12 mx-auto mb-2" />
                   <p>No income records found</p>
                 </div>

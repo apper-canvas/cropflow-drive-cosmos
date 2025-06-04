@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "description": "Corn Harvest - North Field",
+    "amount": 15000.00,
+    "cropType": "Corn",
+    "field": "North Field",
+    "date": "2024-09-15",
+    "buyer": "Local Grain Elevator",
+    "quantity": "500 bushels",
+    "pricePerUnit": 30.00,
+    "notes": "Premium grade corn, excellent quality",
+    "createdAt": "2024-09-15T10:30:00Z",
+    "updatedAt": "2024-09-15T10:30:00Z"
+  },
+  {
+    "id": 2,
+    "description": "Wheat Sale - South Field",
+    "amount": 8500.00,
+    "cropType": "Wheat",
+    "field": "South Field",
+    "date": "2024-08-20",
+    "buyer": "Regional Mill Co",
+    "quantity": "300 bushels",
+    "pricePerUnit": 28.33,
+    "notes": "High protein content wheat",
+    "createdAt": "2024-08-20T14:15:00Z",
+    "updatedAt": "2024-08-20T14:15:00Z"
+  },
+  {
+    "id": 3,
+    "description": "Soybean Sale - East Field",
+    "amount": 12500.00,
+    "cropType": "Soybeans",
+    "field": "East Field",
+    "date": "2024-10-05",
+    "buyer": "Agri-Processing Inc",
+    "quantity": "400 bushels",
+    "pricePerUnit": 31.25,
+    "notes": "Organic certified soybeans",
+    "createdAt": "2024-10-05T09:45:00Z",
+    "updatedAt": "2024-10-05T09:45:00Z"
+  },
+  {
+    "id": 4,
+    "description": "Barley Harvest - West Field",
+    "amount": 6200.00,
+    "cropType": "Barley",
+    "field": "West Field",
+    "date": "2024-11-01",
+    "buyer": "Craft Brewery Supply",
+    "quantity": "250 bushels",
+    "pricePerUnit": 24.80,
+    "notes": "Malting grade barley",
+    "createdAt": "2024-11-01T16:20:00Z",
+    "updatedAt": "2024-11-01T16:20:00Z"
+  },
+  {
+    "id": 5,
+    "description": "Corn Sale - Center Field",
+    "amount": 18200.00,
+    "cropType": "Corn",
+    "field": "Center Field",
+    "date": "2024-09-28",
+    "buyer": "Export Terminal",
+    "quantity": "600 bushels",
+    "pricePerUnit": 30.33,
+    "notes": "Export quality corn, shipped overseas",
+    "createdAt": "2024-09-28T11:10:00Z",
+    "updatedAt": "2024-09-28T11:10:00Z"
+  }
+]
