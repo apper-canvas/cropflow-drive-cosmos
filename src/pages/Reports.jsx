@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { toast } from 'react-toastify'
 import ReactApexCharts from 'react-apexcharts'
+import jsPDF from 'jspdf'
+import 'jspdf-autotable'
 import ApperIcon from '../components/ApperIcon'
 import { fieldService, expenseService, taskService, resourceService } from '../services'
 
@@ -211,53 +213,203 @@ const Reports = () => {
     }
   }
 
-  const handleExport = async (format) => {
+const handleExport = async (format) => {
     setExporting(true)
     try {
       const filteredData = getFilteredData()
       const stats = calculateSummaryStats()
       
       if (format === 'pdf') {
-        // Generate PDF report
-        const reportContent = {
-          title: `Agricultural Report - ${filters.season} ${filters.year}`,
-          summary: stats,
-          expenses: filteredData.expenses,
-          tasks: filteredData.tasks,
-          fields: filteredData.fields
+        // Generate PDF report using jsPDF
+        const doc = new jsPDF()
+        const pageWidth = doc.internal.pageSize.width
+        const pageHeight = doc.internal.pageSize.height
+        let currentY = 20
+        
+        // Title
+        doc.setFontSize(20)
+        doc.setFont('helvetica', 'bold')
+        const title = `Agricultural Report - ${filters.season === 'all' ? 'Full Year' : filters.season.charAt(0).toUpperCase() + filters.season.slice(1)} ${filters.year}`
+        doc.text(title, pageWidth / 2, currentY, { align: 'center' })
+        currentY += 20
+        
+        // Report generation date
+        doc.setFontSize(10)
+        doc.setFont('helvetica', 'normal')
+        doc.text(`Generated on: ${new Date().toLocaleDateString()}`, pageWidth / 2, currentY, { align: 'center' })
+        currentY += 20
+        
+        // Summary Statistics
+        doc.setFontSize(16)
+        doc.setFont('helvetica', 'bold')
+        doc.text('Summary Statistics', 20, currentY)
+        currentY += 10
+        
+        const summaryData = [
+          ['Total Expenses', `$${stats.totalExpenses.toFixed(2)}`],
+          ['Completed Tasks', `${stats.completedTasks}/${stats.totalTasks}`],
+          ['Total Yield', `${stats.totalYield.toFixed(1)} tons`],
+          ['Average Cost per Field', `$${stats.avgExpensePerField.toFixed(2)}`],
+          ['Total Fields', stats.totalFields.toString()]
+        ]
+        
+        doc.autoTable({
+          startY: currentY,
+          head: [['Metric', 'Value']],
+          body: summaryData,
+          theme: 'grid',
+          headStyles: { fillColor: [34, 139, 34] },
+          margin: { left: 20, right: 20 }
+        })
+        
+        currentY = doc.lastAutoTable.finalY + 20
+        
+        // Check if we need a new page
+        if (currentY > pageHeight - 60) {
+          doc.addPage()
+          currentY = 20
         }
         
-        // In a real implementation, you would use a PDF library like jsPDF
-        console.log('PDF Report Data:', reportContent)
-        toast.success('PDF report generated successfully!')
+        // Top Expenses Table
+        doc.setFontSize(16)
+        doc.setFont('helvetica', 'bold')
+        doc.text('Top Expenses', 20, currentY)
+        currentY += 10
+        
+        const topExpenses = filteredData.expenses
+          .sort((a, b) => parseFloat(b.amount) - parseFloat(a.amount))
+          .slice(0, 10)
+          .map(expense => [
+            new Date(expense.date).toLocaleDateString(),
+            expense.description,
+            expense.category,
+            `$${parseFloat(expense.amount).toFixed(2)}`
+          ])
+        
+        if (topExpenses.length > 0) {
+          doc.autoTable({
+            startY: currentY,
+            head: [['Date', 'Description', 'Category', 'Amount']],
+            body: topExpenses,
+            theme: 'grid',
+            headStyles: { fillColor: [34, 139, 34] },
+            margin: { left: 20, right: 20 }
+          })
+          currentY = doc.lastAutoTable.finalY + 20
+        } else {
+          doc.setFontSize(12)
+          doc.setFont('helvetica', 'normal')
+          doc.text('No expenses found for the selected period.', 20, currentY)
+          currentY += 20
+        }
+        
+        // Check if we need a new page
+        if (currentY > pageHeight - 60) {
+          doc.addPage()
+          currentY = 20
+        }
+        
+        // Tasks Summary
+        doc.setFontSize(16)
+        doc.setFont('helvetica', 'bold')
+        doc.text('Recent Tasks', 20, currentY)
+        currentY += 10
+        
+        const recentTasks = filteredData.tasks
+          .sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate))
+          .slice(0, 10)
+          .map(task => [
+            new Date(task.dueDate).toLocaleDateString(),
+            task.title,
+            task.status,
+            task.priority || 'Medium'
+          ])
+        
+        if (recentTasks.length > 0) {
+          doc.autoTable({
+            startY: currentY,
+            head: [['Due Date', 'Task', 'Status', 'Priority']],
+            body: recentTasks,
+            theme: 'grid',
+            headStyles: { fillColor: [34, 139, 34] },
+            margin: { left: 20, right: 20 }
+          })
+        } else {
+          doc.setFontSize(12)
+          doc.setFont('helvetica', 'normal')
+          doc.text('No tasks found for the selected period.', 20, currentY)
+        }
+        
+        // Save the PDF
+        const fileName = `agricultural-report-${filters.season}-${filters.year}.pdf`
+        doc.save(fileName)
+        toast.success('PDF report generated and downloaded successfully!')
+        
       } else if (format === 'csv') {
-        // Generate CSV export
+        // Generate comprehensive CSV export
+        if (filteredData.expenses.length === 0) {
+          toast.warning('No data available for the selected period to export.')
+          return
+        }
+        
         const csvData = filteredData.expenses.map(expense => ({
           Date: expense.date,
           Description: expense.description,
           Amount: expense.amount,
           Category: expense.category,
-          Field: expense.fieldId,
-          CropType: expense.cropType || 'N/A'
+          'Field ID': expense.fieldId,
+          'Crop Type': expense.cropType || 'N/A'
         }))
         
+        // Add summary row
+        csvData.push({
+          Date: '',
+          Description: 'TOTAL',
+          Amount: stats.totalExpenses.toFixed(2),
+          Category: '',
+          'Field ID': '',
+          'Crop Type': ''
+        })
+        
+        const csvHeaders = Object.keys(csvData[0])
         const csvContent = [
-          Object.keys(csvData[0]).join(','),
-          ...csvData.map(row => Object.values(row).join(','))
+          csvHeaders.join(','),
+          ...csvData.map(row => 
+            csvHeaders.map(header => {
+              const value = row[header]
+              // Escape commas and quotes in values
+              if (typeof value === 'string' && (value.includes(',') || value.includes('"'))) {
+                return `"${value.replace(/"/g, '""')}"`
+              }
+              return value
+            }).join(',')
+          )
         ].join('\n')
         
-        const blob = new Blob([csvContent], { type: 'text/csv' })
-        const url = URL.createObjectURL(blob)
-        const link = document.createElement('a')
-        link.href = url
-        link.download = `agricultural-report-${filters.season}-${filters.year}.csv`
-        link.click()
-        URL.revokeObjectURL(url)
-        
-        toast.success('CSV report exported successfully!')
+        try {
+          const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = `agricultural-report-${filters.season}-${filters.year}.csv`
+          link.style.display = 'none'
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          URL.revokeObjectURL(url)
+          
+          toast.success('CSV report exported and downloaded successfully!')
+        } catch (downloadError) {
+          // Fallback for browsers that don't support download attribute
+          const csvWindow = window.open('', '_blank')
+          csvWindow.document.write('<pre>' + csvContent + '</pre>')
+          csvWindow.document.title = `Agricultural Report - ${filters.season} ${filters.year}`
+          toast.success('CSV report opened in new window. Please save manually.')
+        }
       }
     } catch (err) {
-      toast.error('Failed to export report')
+      console.error('Export error:', err)
+      toast.error(`Failed to export ${format.toUpperCase()} report: ${err.message || 'Unknown error'}`)
     } finally {
       setExporting(false)
     }
