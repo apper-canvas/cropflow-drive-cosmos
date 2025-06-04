@@ -18,8 +18,9 @@ const [showAddModal, setShowAddModal] = useState(false)
   const [editingExpense, setEditingExpense] = useState(null)
   const [showAddIncomeModal, setShowAddIncomeModal] = useState(false)
   const [editingIncome, setEditingIncome] = useState(null)
-  const [activeTab, setActiveTab] = useState('expenses')
+const [activeTab, setActiveTab] = useState('expenses')
   const [filteredIncome, setFilteredIncome] = useState([])
+  const [profitabilityData, setProfitabilityData] = useState({})
   const [newExpense, setNewExpense] = useState({
     description: '',
     amount: '',
@@ -176,7 +177,7 @@ toast.error('Failed to delete expense')
       if (sortBy === 'amount') return parseFloat(b.amount) - parseFloat(a.amount)
       if (sortBy === 'category') return a.category.localeCompare(b.category)
       return 0
-    })
+})
 
   // Calculate summary statistics
   const totalExpenses = expenses.reduce((sum, expense) => sum + parseFloat(expense.amount), 0)
@@ -189,11 +190,43 @@ toast.error('Failed to delete expense')
     })
     .reduce((sum, expense) => sum + parseFloat(expense.amount), 0)
 
+  // Calculate profitability data
+  const calculateProfitabilityData = () => {
+    const data = {}
+    
+    // Group income by crop type
+    filteredIncome.forEach(income => {
+      const crop = income.cropType
+      if (!data[crop]) {
+        data[crop] = { income: 0, expenses: 0, profit: 0, margin: 0 }
+      }
+      data[crop].income += parseFloat(income.amount || 0)
+    })
+    
+    // Group expenses by field/crop (assuming field corresponds to crop)
+    expenses.forEach(expense => {
+      const field = expense.field
+      if (data[field]) {
+        data[field].expenses += parseFloat(expense.amount || 0)
+      }
+    })
+    
+    // Calculate profit and margin
+    Object.keys(data).forEach(crop => {
+      data[crop].profit = data[crop].income - data[crop].expenses
+      data[crop].margin = data[crop].income > 0 ? (data[crop].profit / data[crop].income) * 100 : 0
+    })
+    
+    return data
+  }
+
+  const currentProfitabilityData = calculateProfitabilityData()
+
   // Group expenses by category for chart
   const expensesByCategory = expenses.reduce((acc, expense) => {
     acc[expense.category] = (acc[expense.category] || 0) + parseFloat(expense.amount)
     return acc
-}, {})
+  }, {})
 
   // Expense Distribution Chart Data
   const expenseChartData = {
@@ -560,10 +593,10 @@ toast.error('Failed to delete expense')
           </div>
 </motion.div>
 
-        {/* Expenses/Income List */}
-        <motion.div variants={itemVariants} className="space-y-4">
-          {activeTab === 'expenses' ? (
-            filteredExpenses.length > 0 ? (
+{/* Content Area */}
+        {activeTab === 'expenses' && (
+          <motion.div variants={itemVariants} className="space-y-4">
+            {filteredExpenses.length > 0 ? (
               filteredExpenses.map((expense, index) => (
                 <motion.div
                   key={expense.id}
@@ -642,9 +675,13 @@ toast.error('Failed to delete expense')
                   <p>No expenses found</p>
                 </div>
               </div>
-            )
-          ) : (
-            filteredIncome.length > 0 ? (
+            )}
+          </motion.div>
+        )}
+
+        {activeTab === 'income' && (
+          <motion.div variants={itemVariants} className="space-y-4">
+            {filteredIncome.length > 0 ? (
               filteredIncome.map((incomeItem, index) => (
                 <motion.div
                   key={incomeItem.id}
@@ -654,13 +691,10 @@ toast.error('Failed to delete expense')
                   whileHover={{ scale: 1.01, y: -2 }}
                   className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth hover:shadow-earth-hover transition-all duration-300"
                 >
-<div className="flex items-start gap-4 flex-1">
+                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                    <div className="flex items-start gap-4 flex-1">
                       <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
                         <ApperIcon name={getCropIcon(incomeItem.cropType)} className="h-6 w-6 text-green-600" />
-                      </div>
-<div className="flex items-start gap-4 flex-1">
-                      <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                        <ApperIcon name="Sprout" className="h-6 w-6 text-green-600" />
                       </div>
                       
                       <div className="flex-1 min-w-0">
@@ -739,9 +773,148 @@ toast.error('Failed to delete expense')
                   <p>No income records found</p>
                 </div>
               </div>
-            )
-          )}
-        </motion.div>
+            )}
+          </motion.div>
+        )}
+
+        {activeTab === 'profitability' && (
+          <motion.div variants={itemVariants} className="space-y-8">
+            {/* Profitability by Crop Table */}
+            <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
+              <h3 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-6">
+                Profitability Analysis by Crop
+</h3>
+              
+              {Object.keys(currentProfitabilityData).length > 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-earth-200 dark:border-earth-700">
+                        <th className="text-left py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Crop</th>
+                        <th className="text-right py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Income</th>
+                        <th className="text-right py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Expenses</th>
+                        <th className="text-right py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Profit/Loss</th>
+                        <th className="text-right py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Margin</th>
+                        <th className="text-center py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Status</th>
+                      </tr>
+</thead>
+                    <tbody>
+                      {Object.entries(currentProfitabilityData).map(([crop, data]) => (
+                        <tr key={crop} className="border-b border-earth-100 dark:border-earth-700 hover:bg-earth-50 dark:hover:bg-earth-700/50">
+                          <td className="py-4 px-4">
+                            <div className="flex items-center gap-2">
+                              <ApperIcon name={getCropIcon(crop)} className="h-5 w-5 text-primary" />
+                              <span className="font-medium text-earth-800 dark:text-earth-100">{crop}</span>
+                            </div>
+                          </td>
+                          <td className="py-4 px-4 text-right text-green-600 font-semibold">
+                            ${data.income?.toFixed(2) || '0.00'}
+                          </td>
+                          <td className="py-4 px-4 text-right text-red-600 font-semibold">
+                            ${data.expenses?.toFixed(2) || '0.00'}
+                          </td>
+                          <td className={`py-4 px-4 text-right font-semibold ${data.profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            ${data.profit?.toFixed(2) || '0.00'}
+                          </td>
+                          <td className={`py-4 px-4 text-right font-semibold ${data.margin >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            {data.margin?.toFixed(1) || '0.0'}%
+                          </td>
+                          <td className="py-4 px-4 text-center">
+                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                              data.profit >= 0 
+                                ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                                : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+                            }`}>
+                              {data.profit >= 0 ? 'Profitable' : 'Loss'}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <ApperIcon name="BarChart3" className="h-12 w-12 text-earth-400 mx-auto mb-4" />
+                  <p className="text-earth-600 dark:text-earth-400">No profitability data available</p>
+                  <p className="text-sm text-earth-500 dark:text-earth-500 mt-2">
+                    Add income and expense records to see profitability analysis
+                  </p>
+                </div>
+              )}
+            </div>
+</div>
+
+            {/* Profitability Charts */}
+            {Object.keys(currentProfitabilityData).length > 0 && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Profit by Crop Chart */}
+                <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
+                    Profit by Crop
+                  </h4>
+                  <ReactApexCharts
+options={{
+                      chart: { type: 'bar', background: 'transparent' },
+                      xaxis: { categories: Object.keys(currentProfitabilityData) },
+                      colors: ['#22C55E', '#EF4444'],
+                      plotOptions: { bar: { columnWidth: '60%', borderRadius: 4 } },
+                      dataLabels: { enabled: false },
+                      yaxis: {
+                        labels: {
+                          formatter: function (val) {
+                            return '$' + val.toFixed(0)
+                          }
+                        }
+                      }
+                    }}
+series={[{
+                      name: 'Profit/Loss',
+                      data: Object.values(currentProfitabilityData).map(data => data.profit || 0)
+                    }]}
+                    type="bar"
+                    height={300}
+                  />
+                </div>
+
+                {/* Revenue vs Expenses Chart */}
+                <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
+                  <h4 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">
+                    Revenue vs Expenses
+                  </h4>
+                  <ReactApexCharts
+options={{
+                      chart: { type: 'bar', background: 'transparent' },
+                      xaxis: { categories: Object.keys(currentProfitabilityData) },
+                      colors: ['#22C55E', '#EF4444'],
+                      legend: { position: 'top' },
+                      plotOptions: { bar: { columnWidth: '60%', borderRadius: 4 } },
+                      dataLabels: { enabled: false },
+                      yaxis: {
+                        labels: {
+                          formatter: function (val) {
+                            return '$' + val.toFixed(0)
+                          }
+                        }
+                      }
+                    }}
+                    series={[
+{
+                        name: 'Income',
+                        data: Object.values(currentProfitabilityData).map(data => data.income || 0)
+                      },
+                      {
+                        name: 'Expenses',
+                        data: Object.values(currentProfitabilityData).map(data => data.expenses || 0)
+                      }
+                    ]}
+                    type="bar"
+                    height={300}
+                  />
+                </div>
+              </div>
+            )}
+          </motion.div>
+        )}
 
         {/* Add Expense Modal */}
         {showAddModal && (

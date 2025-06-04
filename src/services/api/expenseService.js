@@ -341,6 +341,20 @@ async getTotalExpensesByCrop() {
     return cropTotals
   },
 
+async getTotalIncomeByCrop() {
+    await delay(200)
+    const cropTotals = {}
+    income.forEach(incomeItem => {
+      if (incomeItem.cropType && incomeItem.cropType.trim() !== '') {
+        if (!cropTotals[incomeItem.cropType]) {
+          cropTotals[incomeItem.cropType] = 0
+        }
+        cropTotals[incomeItem.cropType] += parseFloat(incomeItem.amount)
+      }
+    })
+    return cropTotals
+  },
+
   async getProfitabilityByCrop() {
     await delay(300)
     const incomeByCrop = await this.getTotalIncomeByCrop()
