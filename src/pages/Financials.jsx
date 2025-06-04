@@ -7,6 +7,7 @@ import { expenseService } from '../services'
 
 const Financials = () => {
   const [expenses, setExpenses] = useState([])
+  const [budgets, setBudgets] = useState([])
   const [fields, setFields] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -26,6 +27,7 @@ const Financials = () => {
 
   useEffect(() => {
     loadExpenses()
+    loadBudgets()
     loadFields()
   }, [])
 
@@ -50,6 +52,16 @@ const loadExpenses = async () => {
     } catch (err) {
       console.error('Failed to load fields:', err)
       toast.error('Failed to load fields')
+    }
+}
+
+  const loadBudgets = async () => {
+    try {
+      const result = await expenseService.getBudgets()
+      setBudgets(result || [])
+    } catch (err) {
+      console.error('Failed to load budgets:', err)
+      toast.error('Failed to load budget data')
     }
   }
 
@@ -124,12 +136,14 @@ const loadExpenses = async () => {
     return acc
   }, {})
 
-  const chartData = {
+// Expense Distribution Chart Data
+  const expenseChartData = {
     series: Object.values(expensesByCategory),
     options: {
       chart: {
         type: 'donut',
-        background: 'transparent'
+        background: 'transparent',
+        height: 350
       },
       labels: Object.keys(expensesByCategory),
       colors: ['#228B22', '#32CD32', '#FFB347', '#8B4513', '#CD853F', '#FF6B6B'],
@@ -156,10 +170,94 @@ const loadExpenses = async () => {
         breakpoint: 480,
         options: {
           chart: {
-            width: 200
+            width: 280,
+            height: 280
           },
           legend: {
             position: 'bottom'
+          }
+        }
+      }]
+    }
+  }
+
+  // Budget vs Actual Chart Data
+  const budgetCategories = [...new Set([...expenses.map(e => e.category), ...budgets.map(b => b.category)])]
+  const budgetChartData = {
+    series: [
+      {
+        name: 'Budget',
+        data: budgetCategories.map(category => {
+          const budget = budgets.find(b => b.category === category)
+          return budget ? budget.budgetAmount : 0
+        })
+      },
+      {
+        name: 'Actual',
+        data: budgetCategories.map(category => {
+          return expenses
+            .filter(e => e.category === category)
+            .reduce((sum, e) => sum + parseFloat(e.amount), 0)
+        })
+      }
+    ],
+    options: {
+      chart: {
+        type: 'bar',
+        background: 'transparent',
+        height: 350
+      },
+      xaxis: {
+        categories: budgetCategories.map(cat => cat.charAt(0).toUpperCase() + cat.slice(1)),
+        labels: {
+          style: {
+            colors: '#6B7280'
+          }
+        }
+      },
+      yaxis: {
+        labels: {
+          style: {
+            colors: '#6B7280'
+          },
+          formatter: function (val) {
+            return '$' + val.toFixed(0)
+          }
+        }
+      },
+      colors: ['#32CD32', '#228B22'],
+      legend: {
+        position: 'top',
+        labels: {
+          colors: '#6B7280'
+        }
+      },
+      dataLabels: {
+        enabled: false
+      },
+      tooltip: {
+        y: {
+          formatter: function (val) {
+            return '$' + val.toFixed(2)
+          }
+        }
+      },
+      plotOptions: {
+        bar: {
+          columnWidth: '60%',
+          borderRadius: 4
+        }
+      },
+      responsive: [{
+        breakpoint: 480,
+        options: {
+          chart: {
+            height: 280
+          },
+          plotOptions: {
+            bar: {
+              columnWidth: '80%'
+            }
           }
         }
       }]
@@ -273,93 +371,124 @@ const loadExpenses = async () => {
             </div>
           </div>
         </motion.div>
-
-        {/* Chart and Controls Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+{/* Financial Reports Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           {/* Expense Distribution Chart */}
-          <motion.div variants={itemVariants} className="lg:col-span-1">
+          <motion.div variants={itemVariants}>
             <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
               <h3 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">
                 Expense Distribution
               </h3>
-              {Object.keys(expensesByCategory).length > 0 ? (
-                <ReactApexCharts 
-                  options={chartData.options} 
-                  series={chartData.series} 
-                  type="donut" 
-                  height={300}
-                />
-              ) : (
-                <div className="flex items-center justify-center h-64 text-earth-500 dark:text-earth-400">
-                  <div className="text-center">
-                    <ApperIcon name="PieChart" className="h-12 w-12 mx-auto mb-2" />
-                    <p>No expense data available</p>
+              <div className="chart-container">
+                {Object.keys(expensesByCategory).length > 0 ? (
+                  <div className="chart-wrapper">
+                    <ReactApexCharts 
+                      options={expenseChartData.options} 
+                      series={expenseChartData.series} 
+                      type="donut" 
+                      height={350}
+                    />
                   </div>
-                </div>
-              )}
+                ) : (
+                  <div className="flex items-center justify-center h-64 text-earth-500 dark:text-earth-400">
+                    <div className="text-center">
+                      <ApperIcon name="PieChart" className="h-12 w-12 mx-auto mb-2" />
+                      <p>No expense data available</p>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </motion.div>
 
-          {/* Controls */}
-          <motion.div variants={itemVariants} className="lg:col-span-2">
+          {/* Budget vs Actual Chart */}
+          <motion.div variants={itemVariants}>
             <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
               <h3 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">
-                Filter & Search
+                Budget vs Actual
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
-                    Search Expenses
-                  </label>
-                  <div className="relative">
-                    <ApperIcon name="Search" className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-earth-400" />
-                    <input
-                      type="text"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      placeholder="Search by description, category, or field..."
-                      className="w-full pl-10 pr-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+              <div className="chart-container">
+                {budgetCategories.length > 0 ? (
+                  <div className="chart-wrapper">
+                    <ReactApexCharts 
+                      options={budgetChartData.options} 
+                      series={budgetChartData.series} 
+                      type="bar" 
+                      height={350}
                     />
                   </div>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
-                    Sort By
-                  </label>
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
-                  >
-                    <option value="date">Date</option>
-                    <option value="amount">Amount</option>
-                    <option value="category">Category</option>
-                  </select>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
-                    Filter by Category
-                  </label>
-                  <select
-                    value={filterBy}
-                    onChange={(e) => setFilterBy(e.target.value)}
-                    className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
-                  >
-                    <option value="all">All Categories</option>
-                    <option value="seeds">Seeds</option>
-                    <option value="fertilizer">Fertilizer</option>
-                    <option value="equipment">Equipment</option>
-                    <option value="labor">Labor</option>
-                    <option value="fuel">Fuel</option>
-                    <option value="maintenance">Maintenance</option>
-                  </select>
-                </div>
+                ) : (
+                  <div className="flex items-center justify-center h-64 text-earth-500 dark:text-earth-400">
+                    <div className="text-center">
+                      <ApperIcon name="BarChart" className="h-12 w-12 mx-auto mb-2" />
+                      <p>No budget data available</p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </motion.div>
         </div>
+
+        {/* Controls */}
+        <motion.div variants={itemVariants} className="mb-8">
+          <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
+            <h3 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">
+              Filter & Search
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                  Search Expenses
+                </label>
+                <div className="relative">
+                  <ApperIcon name="Search" className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-earth-400" />
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search by description, category, or field..."
+                    className="w-full pl-10 pr-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                  Sort By
+                </label>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                >
+                  <option value="date">Date</option>
+                  <option value="amount">Amount</option>
+                  <option value="category">Category</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
+                  Filter by Category
+                </label>
+                <select
+                  value={filterBy}
+                  onChange={(e) => setFilterBy(e.target.value)}
+                  className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                >
+                  <option value="all">All Categories</option>
+                  <option value="seeds">Seeds</option>
+                  <option value="fertilizer">Fertilizer</option>
+                  <option value="equipment">Equipment</option>
+                  <option value="labor">Labor</option>
+                  <option value="fuel">Fuel</option>
+                  <option value="maintenance">Maintenance</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </motion.div>
 
         {/* Expenses List */}
         <motion.div variants={itemVariants} className="space-y-4">
