@@ -1344,12 +1344,12 @@ const tabs = [
                                     </div>
                                   </div>
                                 </div>
-                              )
+)
                             })}
                           </div>
-</div>
+                        </div>
                       </div>
-                    </div>
+
                       {/* Monthly Expense Trend */}
                       <div className="bg-white dark:bg-earth-700 rounded-xl p-6 border border-earth-200 dark:border-earth-700">
                         <h4 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">
