@@ -6,15 +6,13 @@ import ApperIcon from '../components/ApperIcon'
 import { expenseService } from '../services'
 
 const Financials = () => {
-  const [expenses, setExpenses] = useState([])
-const [budgets, setBudgets] = useState([])
-  const [fields, setFields] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [searchTerm, setSearchTerm] = useState('')
+    const [expenses, setExpenses] = useState([])
+    const [budgets, setBudgets] = useState([])
+    const [fields, setFields] = useState([])
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(null)
+    const [searchTerm, setSearchTerm] = useState('')
   const [sortBy, setSortBy] = useState('date')
-  const [filterBy, setFilterBy] = useState('all')
-const [sortBy, setSortBy] = useState('date')
   const [filterBy, setFilterBy] = useState('all')
   const [showAddModal, setShowAddModal] = useState(false)
   const [editingExpense, setEditingExpense] = useState(null)
@@ -43,9 +41,9 @@ const [sortBy, setSortBy] = useState('date')
     notes: ''
   })
 
-  useEffect(() => {
+useEffect(() => {
     loadExpenses()
-loadBudgets()
+    loadBudgets()
     loadFields()
   }, [])
 
@@ -67,9 +65,9 @@ loadBudgets()
       const { fieldService } = await import('../services')
       const result = await fieldService.getAll()
       setFields(result || [])
-    } catch (err) {
+} catch (err) {
       console.error('Failed to load fields:', err)
-toast.error('Failed to load fields')
+      toast.error('Failed to load fields')
     }
   }
 
@@ -109,9 +107,9 @@ toast.error('Failed to load fields')
   }
 
   const handleDeleteExpense = async (expenseId) => {
-    if (window.confirm('Are you sure you want to delete this expense?')) {
+if (window.confirm('Are you sure you want to delete this expense?')) {
       try {
-await expenseService.delete(expenseId)
+        await expenseService.delete(expenseId)
         setExpenses(prev => prev.filter(e => e.id !== expenseId))
         toast.success('Expense deleted successfully!')
       } catch (err) {
@@ -174,9 +172,9 @@ await expenseService.delete(expenseId)
       expense.field.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .sort((a, b) => {
-      if (sortBy === 'date') return new Date(b.date) - new Date(a.date)
+if (sortBy === 'date') return new Date(b.date) - new Date(a.date)
       if (sortBy === 'amount') return parseFloat(b.amount) - parseFloat(a.amount)
-if (sortBy === 'category') return a.category.localeCompare(b.category)
+      if (sortBy === 'category') return a.category.localeCompare(b.category)
       return 0
     })
 
@@ -414,9 +412,9 @@ if (sortBy === 'category') return a.category.localeCompare(b.category)
         initial="hidden"
         animate="visible"
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8"
-      >
+>
         {/* Header */}
-<motion.div variants={itemVariants} className="mb-8">
+        <motion.div variants={itemVariants} className="mb-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-earth-800 dark:text-earth-100 mb-2">
@@ -435,9 +433,9 @@ if (sortBy === 'category') return a.category.localeCompare(b.category)
                   <ApperIcon name="Plus" className="h-5 w-5 inline mr-2" />
                   Add Expense
                 </button>
-              )}
+)}
               
-{activeTab === 'income' && (
+              {activeTab === 'income' && (
                 <button
                   onClick={() => setShowAddIncomeModal(true)}
                   className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-earth hover:shadow-earth-hover"
@@ -515,9 +513,9 @@ if (sortBy === 'category') return a.category.localeCompare(b.category)
                   ${monthlyExpenses.toFixed(2)}
                 </p>
               </div>
-              <ApperIcon name="Calendar" className="h-8 w-8 text-blue-600" />
+<ApperIcon name="Calendar" className="h-8 w-8 text-blue-600" />
             </div>
-</div>
+          </div>
           
           <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
             <div className="flex items-center justify-between">
@@ -637,9 +635,10 @@ if (sortBy === 'category') return a.category.localeCompare(b.category)
                   value={filterBy}
                   onChange={(e) => setFilterBy(e.target.value)}
                   className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
-                >
+>
                   <option value="all">All Categories</option>
-<option value="fertilizer">Fertilizer</option>
+                  <option value="seeds">Seeds</option>
+                  <option value="fertilizer">Fertilizer</option>
                   <option value="equipment">Equipment</option>
                   <option value="labor">Labor</option>
                   <option value="fuel">Fuel</option>
@@ -830,9 +829,9 @@ if (sortBy === 'category') return a.category.localeCompare(b.category)
                   <p>No income records found</p>
                 </div>
               </div>
-            )}
-          </motion.div>
 )}
+          </motion.div>
+        )}
 
         {activeTab === 'profitability' && (
           <motion.div variants={itemVariants} className="space-y-8">
@@ -844,9 +843,9 @@ if (sortBy === 'category') return a.category.localeCompare(b.category)
               
               {Object.keys(currentProfitabilityData).length > 0 ? (
                 <div className="overflow-x-auto">
-                  <table className="w-full">
+<table className="w-full">
                     <thead>
-<tr className="border-b border-earth-200 dark:border-earth-700">
+                      <tr className="border-b border-earth-200 dark:border-earth-700">
                         <th className="text-left py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Crop</th>
                         <th className="text-right py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Income</th>
                         <th className="text-right py-3 px-4 font-semibold text-earth-800 dark:text-earth-100">Expenses</th>
@@ -882,9 +881,9 @@ if (sortBy === 'category') return a.category.localeCompare(b.category)
                                 ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
                                 : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
                             }`}>
-                              {data.profit >= 0 ? 'Profitable' : 'Loss'}
+{data.profit >= 0 ? 'Profitable' : 'Loss'}
                             </span>
-</td>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -901,9 +900,8 @@ if (sortBy === 'category') return a.category.localeCompare(b.category)
               )}
             </div>
 
-            {/* Profitability Charts */}
+{/* Profitability Charts */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Profit by Crop Chart */}
               <div className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth">
                 <h4 className="text-lg font-semibold text-earth-800 dark:text-earth-100 mb-4">
@@ -967,11 +965,12 @@ if (sortBy === 'category') return a.category.localeCompare(b.category)
                     type="bar"
                     height={300}
                   />
+/>
                 </div>
+              </div>
             </div>
           </motion.div>
         )}
-
         {/* Add Expense Modal */}
         {showAddModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -1021,15 +1020,15 @@ if (sortBy === 'category') return a.category.localeCompare(b.category)
                     />
                   </div>
                   <div>
+<div>
                     <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
                       Category
                     </label>
                     <select
-<select
-                      value={newExpense.category}
                       onChange={(e) => setNewExpense({...newExpense, category: e.target.value})}
                       className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
                       required
+                    >
                       <option value="">Select category</option>
                       <option value="seeds">Seeds</option>
                       <option value="fertilizer">Fertilizer</option>
@@ -1156,15 +1155,15 @@ if (sortBy === 'category') return a.category.localeCompare(b.category)
                     />
                   </div>
                   <div>
+<div>
                     <label className="block text-sm font-medium text-earth-700 dark:text-earth-300 mb-2">
                       Category
                     </label>
                     <select
-<select
-                      value={editingExpense.category}
                       onChange={(e) => setEditingExpense({...editingExpense, category: e.target.value})}
                       className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
                       required
+                    >
                       <option value="">Select category</option>
                       <option value="seeds">Seeds</option>
                       <option value="fertilizer">Fertilizer</option>
@@ -1220,15 +1219,15 @@ if (sortBy === 'category') return a.category.localeCompare(b.category)
                     className="w-full px-4 py-2 border border-earth-300 dark:border-earth-600 rounded-lg bg-white dark:bg-earth-700 text-earth-900 dark:text-earth-100 focus:ring-2 focus:ring-primary focus:border-transparent"
                     placeholder="Optional notes about this expense..."
                   />
-                </div>
+</div>
                 
                 <div className="flex gap-3 pt-4">
                   <button
-<button
                     type="button"
                     onClick={() => setEditingExpense(null)}
                     className="flex-1 px-4 py-2 border border-earth-300 dark:border-earth-600 text-earth-700 dark:text-earth-300 rounded-lg hover:bg-earth-50 dark:hover:bg-earth-700 transition-colors"
                   >
+                    Cancel
                   </button>
                   <button
                     type="submit"
