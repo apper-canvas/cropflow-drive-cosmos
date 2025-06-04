@@ -9,15 +9,17 @@ const Financials = () => {
   const [expenses, setExpenses] = useState([])
   const [budgets, setBudgets] = useState([])
   const [fields, setFields] = useState([])
-  const [loading, setLoading] = useState(false)
+const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-const [searchTerm, setSearchTerm] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
   const [sortBy, setSortBy] = useState('date')
   const [filterBy, setFilterBy] = useState('all')
-  const [showAddModal, setShowAddModal] = useState(false)
+const [showAddModal, setShowAddModal] = useState(false)
   const [editingExpense, setEditingExpense] = useState(null)
   const [showAddIncomeModal, setShowAddIncomeModal] = useState(false)
   const [editingIncome, setEditingIncome] = useState(null)
+  const [activeTab, setActiveTab] = useState('expenses')
+  const [filteredIncome, setFilteredIncome] = useState([])
   const [newExpense, setNewExpense] = useState({
     description: '',
     amount: '',
@@ -331,6 +333,16 @@ toast.error('Failed to delete expense')
       case 'maintenance': return 'Settings'
       default: return 'DollarSign'
     }
+}
+
+  const getCropIcon = (cropType) => {
+    switch (cropType?.toLowerCase()) {
+      case 'corn': return 'Sprout'
+      case 'wheat': return 'Wheat'
+      case 'soybeans': return 'Leaf'
+      case 'barley': return 'Grain'
+      default: return 'Sprout'
+    }
   }
 
   const containerVariants = {
@@ -422,9 +434,9 @@ toast.error('Failed to delete expense')
                 <p className="text-earth-600 dark:text-earth-400 text-sm mb-1">Avg per Expense</p>
                 <p className="text-2xl font-bold text-earth-800 dark:text-earth-100">
                   ${expenses.length > 0 ? (totalExpenses / expenses.length).toFixed(2) : '0.00'}
-                </p>
+</p>
               </div>
-<ApperIcon name="TrendingUp" className="h-8 w-8 text-green-600" />
+              <ApperIcon name="TrendingUp" className="h-8 w-8 text-green-600" />
             </div>
           </div>
         </motion.div>
@@ -546,89 +558,188 @@ toast.error('Failed to delete expense')
               </div>
             </div>
           </div>
-        </motion.div>
+</motion.div>
 
-{/* Expenses List */}
+        {/* Expenses/Income List */}
         <motion.div variants={itemVariants} className="space-y-4">
-          {filteredExpenses.length > 0 ? (
-            filteredExpenses.map((expense, index) => (
-              <motion.div
-                key={expense.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 * index }}
-                whileHover={{ scale: 1.01, y: -2 }}
-                className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth hover:shadow-earth-hover transition-all duration-300"
-              >
-                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                  <div className="flex items-start gap-4 flex-1">
-                    <div className="p-2 bg-earth-100 dark:bg-earth-700 rounded-lg">
-                      <ApperIcon name={getCategoryIcon(expense.category)} className="h-6 w-6 text-primary" />
+          {activeTab === 'expenses' ? (
+            filteredExpenses.length > 0 ? (
+              filteredExpenses.map((expense, index) => (
+                <motion.div
+                  key={expense.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 * index }}
+                  whileHover={{ scale: 1.01, y: -2 }}
+                  className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth hover:shadow-earth-hover transition-all duration-300"
+                >
+                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                    <div className="flex items-start gap-4 flex-1">
+                      <div className="p-2 bg-earth-100 dark:bg-earth-700 rounded-lg">
+                        <ApperIcon name={getCategoryIcon(expense.category)} className="h-6 w-6 text-primary" />
+                      </div>
+                      
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between mb-2">
+                          <h3 className="text-lg font-semibold text-earth-800 dark:text-earth-100">
+                            {expense.description}
+                          </h3>
+                          <span className="text-xl font-bold text-red-600 ml-4">
+                            ${parseFloat(expense.amount).toFixed(2)}
+                          </span>
+                        </div>
+                        
+                        <p className="text-earth-600 dark:text-earth-400 text-sm mb-3">
+                          {expense.notes}
+                        </p>
+                        
+                        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+                          <div className="flex items-center gap-2">
+                            <ApperIcon name="Tag" className="h-4 w-4 text-earth-500" />
+                            <span className="text-earth-600 dark:text-earth-400 capitalize">
+                              {expense.category}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <ApperIcon name="MapPin" className="h-4 w-4 text-earth-500" />
+                            <span className="text-earth-600 dark:text-earth-400">
+                              {expense.field}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <ApperIcon name="Calendar" className="h-4 w-4 text-earth-500" />
+                            <span className="text-earth-600 dark:text-earth-400">
+                              {new Date(expense.date).toLocaleDateString()}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                     
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between mb-2">
-                        <h3 className="text-lg font-semibold text-earth-800 dark:text-earth-100">
-                          {expense.description}
-                        </h3>
-                        <span className="text-xl font-bold text-red-600 ml-4">
-                          ${parseFloat(expense.amount).toFixed(2)}
-                        </span>
-                      </div>
-                      
-                      <p className="text-earth-600 dark:text-earth-400 text-sm mb-3">
-                        {expense.notes}
-                      </p>
-                      
-                      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-                        <div className="flex items-center gap-2">
-                          <ApperIcon name="Tag" className="h-4 w-4 text-earth-500" />
-                          <span className="text-earth-600 dark:text-earth-400 capitalize">
-                            {expense.category}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <ApperIcon name="MapPin" className="h-4 w-4 text-earth-500" />
-                          <span className="text-earth-600 dark:text-earth-400">
-                            {expense.field}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <ApperIcon name="Calendar" className="h-4 w-4 text-earth-500" />
-                          <span className="text-earth-600 dark:text-earth-400">
-                            {new Date(expense.date).toLocaleDateString()}
-                          </span>
-                        </div>
-                      </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setEditingExpense(expense)}
+                        className="bg-earth-100 dark:bg-earth-700 text-earth-700 dark:text-earth-300 px-4 py-2 rounded-lg hover:bg-earth-200 dark:hover:bg-earth-600 transition-colors text-sm font-medium"
+                      >
+                        <ApperIcon name="Edit2" className="h-4 w-4 inline mr-1" />
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteExpense(expense.id)}
+                        className="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 px-4 py-2 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors text-sm font-medium"
+                      >
+                        <ApperIcon name="Trash2" className="h-4 w-4 inline mr-1" />
+                        Delete
+                      </button>
                     </div>
                   </div>
-                  
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => setEditingExpense(expense)}
-                      className="bg-earth-100 dark:bg-earth-700 text-earth-700 dark:text-earth-300 px-4 py-2 rounded-lg hover:bg-earth-200 dark:hover:bg-earth-600 transition-colors text-sm font-medium"
-                    >
-                      <ApperIcon name="Edit2" className="h-4 w-4 inline mr-1" />
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteExpense(expense.id)}
-                      className="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 px-4 py-2 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors text-sm font-medium"
-                    >
-                      <ApperIcon name="Trash2" className="h-4 w-4 inline mr-1" />
-                      Delete
-                    </button>
-                  </div>
+                </motion.div>
+              ))
+            ) : (
+              <div className="flex items-center justify-center h-64 text-earth-500 dark:text-earth-400">
+                <div className="text-center">
+                  <ApperIcon name="Receipt" className="h-12 w-12 mx-auto mb-2" />
+                  <p>No expenses found</p>
                 </div>
-              </motion.div>
-            ))
-          ) : (
-            <div className="flex items-center justify-center h-64 text-earth-500 dark:text-earth-400">
-              <div className="text-center">
-                <ApperIcon name="Receipt" className="h-12 w-12 mx-auto mb-2" />
-                <p>No expenses found</p>
               </div>
-            </div>
+            )
+          ) : (
+            filteredIncome.length > 0 ? (
+              filteredIncome.map((incomeItem, index) => (
+                <motion.div
+                  key={incomeItem.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 * index }}
+                  whileHover={{ scale: 1.01, y: -2 }}
+                  className="bg-white dark:bg-earth-800 rounded-2xl p-6 shadow-earth hover:shadow-earth-hover transition-all duration-300"
+                >
+<div className="flex items-start gap-4 flex-1">
+                      <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                        <ApperIcon name={getCropIcon(incomeItem.cropType)} className="h-6 w-6 text-green-600" />
+                      </div>
+<div className="flex items-start gap-4 flex-1">
+                      <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                        <ApperIcon name="Sprout" className="h-6 w-6 text-green-600" />
+                      </div>
+                      
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between mb-2">
+                          <h3 className="text-lg font-semibold text-earth-800 dark:text-earth-100">
+                            {incomeItem.description}
+                          </h3>
+                          <span className="text-xl font-bold text-green-600 ml-4">
+                            ${parseFloat(incomeItem.amount).toFixed(2)}
+                          </span>
+                        </div>
+                        
+                        <p className="text-earth-600 dark:text-earth-400 text-sm mb-3">
+                          {incomeItem.notes}
+                        </p>
+                        
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+                          <div className="flex items-center gap-2">
+                            <ApperIcon name="Sprout" className="h-4 w-4 text-earth-500" />
+                            <span className="text-earth-600 dark:text-earth-400">
+                              {incomeItem.cropType}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <ApperIcon name="MapPin" className="h-4 w-4 text-earth-500" />
+                            <span className="text-earth-600 dark:text-earth-400">
+                              {incomeItem.field}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <ApperIcon name="User" className="h-4 w-4 text-earth-500" />
+                            <span className="text-earth-600 dark:text-earth-400">
+                              {incomeItem.buyer}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <ApperIcon name="Calendar" className="h-4 w-4 text-earth-500" />
+                            <span className="text-earth-600 dark:text-earth-400">
+                              {new Date(incomeItem.date).toLocaleDateString()}
+                            </span>
+                          </div>
+                        </div>
+                        
+                        {incomeItem.quantity && (
+                          <div className="mt-2 text-sm text-earth-500 dark:text-earth-400">
+                            Quantity: {incomeItem.quantity} 
+                            {incomeItem.pricePerUnit && ` @ $${parseFloat(incomeItem.pricePerUnit).toFixed(2)} per unit`}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setEditingIncome(incomeItem)}
+                        className="bg-earth-100 dark:bg-earth-700 text-earth-700 dark:text-earth-300 px-4 py-2 rounded-lg hover:bg-earth-200 dark:hover:bg-earth-600 transition-colors text-sm font-medium"
+                      >
+                        <ApperIcon name="Edit2" className="h-4 w-4 inline mr-1" />
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteIncome(incomeItem.id)}
+                        className="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 px-4 py-2 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors text-sm font-medium"
+                      >
+                        <ApperIcon name="Trash2" className="h-4 w-4 inline mr-1" />
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))
+            ) : (
+              <div className="flex items-center justify-center h-64 text-earth-500 dark:text-earth-400">
+                <div className="text-center">
+                  <ApperIcon name="TrendingUp" className="h-12 w-12 mx-auto mb-2" />
+                  <p>No income records found</p>
+                </div>
+              </div>
+            )
           )}
         </motion.div>
 
@@ -695,9 +806,9 @@ toast.error('Failed to delete expense')
                       <option value="fertilizer">Fertilizer</option>
                       <option value="equipment">Equipment</option>
                       <option value="labor">Labor</option>
-                      <option value="fuel">Fuel</option>
+<option value="fuel">Fuel</option>
                       <option value="maintenance">Maintenance</option>
-</select>
+                    </select>
                   </div>
                 </div>
                 
@@ -830,9 +941,9 @@ toast.error('Failed to delete expense')
                       <option value="fertilizer">Fertilizer</option>
                       <option value="equipment">Equipment</option>
                       <option value="labor">Labor</option>
-                      <option value="fuel">Fuel</option>
+<option value="fuel">Fuel</option>
                       <option value="maintenance">Maintenance</option>
-</select>
+                    </select>
                   </div>
                 </div>
                 
@@ -894,9 +1005,9 @@ toast.error('Failed to delete expense')
                     type="submit"
                     className="flex-1 bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg transition-colors"
                   >
-                    Update Expense
+Update Expense
                   </button>
-</div>
+                </div>
               </form>
             </motion.div>
           </div>
